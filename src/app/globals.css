@@ -1,0 +1,83 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 210 60% 98%;
+    --foreground: 224 71% 25%;
+    --card: 0 0% 100%;
+    --card-foreground: 224 71% 25%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 224 71% 25%;
+    --primary: 217 91% 60%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 210 40% 96.1%;
+    --secondary-foreground: 222.2 47.4% 11.2%;
+    --muted: 210 40% 96.1%;
+    --muted-foreground: 215.4 16.3% 46.9%;
+    --accent: 45 93% 57%;
+    --accent-foreground: 24 9.8% 10%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 214.3 31.8% 91.4%;
+    --input: 214.3 31.8% 91.4%;
+    --ring: 217 91% 60%;
+    --radius: 1.5rem;
+    --chart-1: 217 91% 60%;
+    --chart-2: 45 93% 57%;
+
+    --brand-blue: 217 91% 60%;
+    --brand-yellow: 45 93% 57%;
+    --brand-green: 142 71% 45%;
+    --brand-red: 0 84% 60%;
+    --brand-purple: 262 85% 60%;
+    --brand-text: 224 71% 25%;
+    --brand-text-light: 224 71% 45%;
+  }
+
+  .dark {
+    --background: 222 47% 11%;
+    --foreground: 0 0% 98%;
+    --card: 222 47% 13%;
+    --card-foreground: 0 0% 98%;
+    --popover: 222 47% 11%;
+    --popover-foreground: 0 0% 98%;
+    --primary: 217 91% 60%;
+    --primary-foreground: 0 0% 98%;
+    --secondary: 217 32.6% 17.5%;
+    --secondary-foreground: 0 0% 98%;
+    --muted: 217 32.6% 17.5%;
+    --muted-foreground: 0 0% 63.9%;
+    --accent: 45 93% 57%;
+    --accent-foreground: 24 9.8% 10%;
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 217 32.6% 17.5%;
+    --input: 217 32.6% 17.5%;
+    --ring: 217 91% 60%;
+    --chart-1: 217 91% 60%;
+    --chart-2: 45 93% 57%;
+
+    --brand-blue: 217 91% 60%;
+    --brand-yellow: 45 93% 57%;
+    --brand-green: 142 71% 45%;
+    --brand-red: 0 84% 60%;
+    --brand-purple: 262 85% 60%;
+    --brand-text: 0 0% 98%;
+    --brand-text-light: 0 0% 80%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+    font-family: 'Nunito', sans-serif;
+  }
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-extrabold tracking-tighter text-foreground;
+  }
+}
