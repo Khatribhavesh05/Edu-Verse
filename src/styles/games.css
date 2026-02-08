@@ -1,0 +1,16 @@
+/* Games styling - avoiding inline styles with CSS custom properties */
+
+.game-progress-bar {
+  width: var(--progress-width, 0%);
+  transition: width 0.3s ease-in-out;
+}
+
+.card-flip {
+  perspective: 1000px;
+  transform-style: preserve-3d;
+}
+
+.card-face {
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}

@@ -1,11 +1,12 @@
 
 'use client';
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import { motion } from 'framer-motion';
 import Confetti from 'react-confetti';
 import { Button } from './ui/button';
 import { CheckCircle, XCircle } from 'lucide-react';
+import { playSuccessSound } from '@/lib/sound-effects';
 
 interface GameFeedbackProps {
   status: 'correct' | 'incorrect' | 'win';
@@ -18,6 +19,13 @@ interface GameFeedbackProps {
 export function GameFeedback({ status, onNext, correctAnswer, score, winMessage }: GameFeedbackProps) {
   const isCorrect = status === 'correct';
   const isWin = status === 'win';
+
+  // Play success sound on correct answer or win
+  useEffect(() => {
+    if (isCorrect || isWin) {
+      playSuccessSound();
+    }
+  }, [isCorrect, isWin]);
 
   const messages = {
     correct: ["Awesome!", "Great job!", "You got it!", "Brilliant!", "Fantastic!"],

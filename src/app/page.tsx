@@ -8,6 +8,8 @@ import { subjects } from '@/lib/constants';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { motion } from 'framer-motion';
+import { VoiceLearning } from '@/components/voice-learning';
+import { TodaysHighlight } from '@/components/todays-highlight';
 
 export default function Home() {
   return (
@@ -17,27 +19,42 @@ export default function Home() {
       transition={{ duration: 0.5 }}
       className="flex flex-col gap-16"
     >
-      <section className="text-center">
+      {/* Welcome Section */}
+      <section className="flex flex-col items-center text-center">
         <motion.div 
-          className="inline-block p-4 bg-yellow-300/50 rounded-full mb-4 shadow-lg"
-          animate={{ rotate: [0, 15, -10, 15, 0], scale: [1, 1.1, 1, 1.1, 1]}}
-          transition={{ duration: 2, repeat: Infinity, repeatDelay: 3 }}
+          className="flex flex-col items-center"
+          initial={{ opacity: 0, y: -30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.1 }}
         >
-            <span className="text-6xl">👋</span>
+          <div className="inline-block p-4 bg-yellow-300/50 rounded-full mb-4 shadow-lg w-fit">
+              <span className="text-6xl">👋</span>
+          </div>
+          <h1 className="text-5xl md:text-7xl font-black tracking-tighter text-transparent bg-clip-text bg-gradient-to-r from-blue-500 to-purple-600">
+            Welcome to EduVerse!
+          </h1>
+          <p className="max-w-3xl mt-2 text-sm md:text-base text-brand-text-light font-medium">
+            Designed for kids (Ages 6–12 | Grades 1–6) to learn through games, voice, and fun challenges.
+          </p>
+          <p className="max-w-3xl mt-4 text-xl text-brand-text-light font-medium">
+            Your fun-filled adventure in learning starts right here. Pick a subject and let the games begin!
+          </p>
+           <div className="mt-8">
+              <Link href="/dashboard">
+                  <Button size="lg">
+                      Go to my Dashboard <ArrowRight className="w-6 h-6 ml-2" />
+                  </Button>
+              </Link>
+          </div>
         </motion.div>
-        <h1 className="text-5xl md:text-7xl font-black tracking-tighter text-transparent bg-clip-text bg-gradient-to-r from-blue-500 to-purple-600">
-          Welcome to EduVerse!
-        </h1>
-        <p className="max-w-3xl mx-auto mt-4 text-xl text-brand-text-light font-medium">
-          Your fun-filled adventure in learning starts right here. Pick a subject and let the games begin!
-        </p>
-         <div className="mt-8">
-            <Link href="/dashboard">
-                <Button size="lg">
-                    Go to my Dashboard <ArrowRight className="w-6 h-6 ml-2" />
-                </Button>
-            </Link>
-        </div>
+      </section>
+
+      {/* Today's Highlight Card */}
+      <section className="max-w-2xl mx-auto w-full">
+        <TodaysHighlight 
+          hasActivity={false}
+          activityType="general"
+        />
       </section>
 
       <section>
@@ -95,6 +112,9 @@ export default function Home() {
               </CardContent>
             </Card>
           </Link>
+        </div>
+        <div className="mt-10">
+          <VoiceLearning />
         </div>
       </section>
     </motion.div>

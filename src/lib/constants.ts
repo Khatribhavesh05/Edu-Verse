@@ -1,6 +1,6 @@
 
 
-import { Book, BrainCircuit, Code, Dna, Globe, GraduationCap, Home, LayoutDashboard, MessageSquare, Award, Shapes, Atom, Recycle, TestTube, Infinity, PenLine, Blocks, MessageCircle, GanttChartSquare, Landmark, Building2, Globe2, Binary, CircuitBoard, Scale, Lightbulb, MoveHorizontal, Pen, Brain } from "lucide-react";
+import { Book, BrainCircuit, Code, Dna, Globe, GraduationCap, Home, LayoutDashboard, MessageSquare, Award, Shapes, Atom, Recycle, TestTube, Infinity, PenLine, Blocks, MessageCircle, GanttChartSquare, Landmark, Building2, Globe2, Binary, CircuitBoard, Scale, Lightbulb, MoveHorizontal, Pen, Brain, PawPrint, Flame, Gamepad2, Heart, Trophy, Users, Gift } from "lucide-react";
 
 export const subjects = [
   { name: 'Mathematics', slug: 'mathematics', icon: Infinity },
@@ -12,10 +12,13 @@ export const subjects = [
 ];
 
 export const navLinks = [
-    { href: '/', label: 'Home', icon: Home },
-    { href: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
-    { href: '/ai-tutor', label: 'AI Chatbot', icon: MessageSquare },
-    { href: '/topic-description', label: 'Topic Description', icon: BrainCircuit },
+  { href: '/', label: 'Home', icon: Home },
+  { href: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
+  { href: '/ai-tutor', label: 'AI Chatbot', icon: MessageSquare },
+  { href: '/topic-description', label: 'Topic Description', icon: BrainCircuit },
+  { href: '/my-learning-pet', label: 'My Learning Pet 🐣', icon: PawPrint },
+  { href: '/surprise-box', label: 'Surprise Box 🎁', icon: Gift },
+  { href: '/parent-overview', label: 'Parent Overview 👨‍👩‍👧', icon: Users },
 ];
 
 export const progressData = [

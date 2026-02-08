@@ -1,11 +1,17 @@
 
 'use client';
 
+import { useEffect } from 'react';
 import { Card, CardHeader, CardTitle, CardContent, CardDescription } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
 import { Badge } from '@/components/ui/badge';
 import { badges as allBadges, games } from '@/lib/constants';
 import { motion } from 'framer-motion';
+import DailyQuestCard from '@/components/daily-quest';
+import MoodGuideModal from '@/components/mood-guide-modal';
+import { ParentProgressSnapshot } from '@/components/parent-progress-snapshot';
+import { TodaysHighlight } from '@/components/todays-highlight';
+import { playPageTransitionSound } from '@/lib/sound-effects';
 
 // Static data for the prototype dashboard
 const staticProgress = {
@@ -18,6 +24,10 @@ const staticProgress = {
 const staticUnlockedBadges = ['Equation Master', 'Ecosystem Expert', 'Grammar Guru'];
 
 export default function DashboardPage() {
+  useEffect(() => {
+    playPageTransitionSound();
+  }, []);
+
   const progress = staticProgress;
   const unlockedBadges = staticUnlockedBadges;
 
@@ -31,6 +41,17 @@ export default function DashboardPage() {
   
   const displayedBadges = allBadges.filter(b => unlockedBadges.includes(b.name));
 
+  // Detect if user has activity today
+  const hasActivityToday = playedGamesCount > 0;
+  
+  // Determine activity type for personalized message
+  const activityType = hasActivityToday ? (
+    Object.keys(progress).some(key => key.includes('math')) ? 'math' :
+    Object.keys(progress).some(key => key.includes('science')) ? 'science' :
+    Object.keys(progress).some(key => key.includes('english')) ? 'english' :
+    'general'
+  ) : 'general';
+
   return (
     <motion.div 
       initial={{ opacity: 0, y: 20 }}
@@ -41,6 +62,23 @@ export default function DashboardPage() {
       <section>
         <h1 className="text-5xl font-black tracking-tight">Welcome, Super Learner!</h1>
         <p className="text-xl text-brand-text-light mt-1">Here's your awesome progress. Keep it up! 🚀</p>
+      </section>
+
+      {/* Today's Highlight Card */}
+      <section>
+        <TodaysHighlight 
+          hasActivity={hasActivityToday}
+          activityType={activityType as 'math' | 'science' | 'english' | 'general'}
+        />
+      </section>
+
+        <section>
+          <ParentProgressSnapshot />
+        </section>
+
+      {/* Daily Learning Quest */}
+      <section>
+        <DailyQuestCard />
       </section>
       
       <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
@@ -113,6 +151,12 @@ export default function DashboardPage() {
             </Card>
         </div>
       </div>
+
+      {/* Mood-Based Learning Guide */}
+      <section>
+        <hr className="my-8 border-gray-300" />
+        <MoodGuideModal />
+      </section>
     </motion.div>
   );
 }

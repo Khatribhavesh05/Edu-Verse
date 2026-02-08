@@ -2,6 +2,580 @@
 @tailwind components;
 @tailwind utilities;
 
+@keyframes pulse-gentle {
+  0%, 100% {
+    box-shadow: 0 0 0 0 rgba(236, 72, 153, 0.4);
+  }
+  50% {
+    box-shadow: 0 0 0 10px rgba(236, 72, 153, 0);
+  }
+}
+
+@keyframes bounce-subtle {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-4px);
+  }
+}
+
+@keyframes shine {
+  0% {
+    transform: translateX(-200%) skewX(-20deg);
+  }
+  100% {
+    transform: translateX(200%) skewX(-20deg);
+  }
+}
+
+@keyframes shineSweep {
+  from {
+    left: -120%;
+  }
+  to {
+    left: 120%;
+  }
+}
+
+@keyframes eduverse-float {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-8px);
+  }
+}
+
+@keyframes eduverse-float-slow {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-5px);
+  }
+}
+
+@keyframes eduverse-breathe {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.015);
+  }
+}
+
+@keyframes eduverse-breathe-slow {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.012);
+  }
+}
+
+@keyframes eduverse-head-tilt {
+  0%, 100% {
+    transform: translateX(-50%) rotate(-0.5deg);
+  }
+  50% {
+    transform: translateX(-50%) rotate(1deg);
+  }
+}
+
+@keyframes eduverse-head-tilt-alt {
+  0%, 100% {
+    transform: translateX(-50%) rotate(0.5deg);
+  }
+  50% {
+    transform: translateX(-50%) rotate(-1deg);
+  }
+}
+
+@keyframes eduverse-blink-left {
+  0%, 45%, 55%, 100% {
+    transform: scaleY(1);
+  }
+  48%, 52% {
+    transform: scaleY(0.1);
+  }
+}
+
+@keyframes eduverse-blink-right {
+  0%, 46%, 56%, 100% {
+    transform: scaleY(1);
+  }
+  49%, 53% {
+    transform: scaleY(0.1);
+  }
+}
+
+@keyframes eduverse-blink-left-alt {
+  0%, 35%, 45%, 100% {
+    transform: scaleY(1);
+  }
+  38%, 42% {
+    transform: scaleY(0.1);
+  }
+}
+
+@keyframes eduverse-blink-right-alt {
+  0%, 36%, 46%, 100% {
+    transform: scaleY(1);
+  }
+  39%, 43% {
+    transform: scaleY(0.1);
+  }
+}
+
+@keyframes eduverse-smile {
+  0%, 100% {
+    transform: translateX(-50%) scaleX(1);
+  }
+  50% {
+    transform: translateX(-50%) scaleX(1.05);
+  }
+}
+
+@keyframes eduverse-tap {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(1.5px);
+  }
+}
+
+@keyframes eduverse-tap-slow {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(1px);
+  }
+}
+
+@keyframes eduverse-screen-glow {
+  0%, 100% {
+    opacity: 0.3;
+  }
+  50% {
+    opacity: 0.6;
+  }
+}
+
+@keyframes eduverse-screen-glow-slow {
+  0%, 100% {
+    opacity: 0.25;
+  }
+  50% {
+    opacity: 0.55;
+  }
+}
+
+@keyframes eduverse-tap-point {
+  0%, 30%, 100% {
+    opacity: 0;
+    transform: scale(0.8);
+  }
+  35%, 45% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes eduverse-tap-point-slow {
+  0%, 25%, 100% {
+    opacity: 0;
+    transform: scale(0.8);
+  }
+  30%, 40% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes eduverse-hand-tap {
+  0%, 100% {
+    transform: translateY(0);
+    opacity: 0.6;
+  }
+  50% {
+    transform: translateY(3px);
+    opacity: 0.3;
+  }
+}
+
+@keyframes eduverse-hand-tap-slow {
+  0%, 100% {
+    transform: translateY(0);
+    opacity: 0.5;
+  }
+  50% {
+    transform: translateY(2px);
+    opacity: 0.25;
+  }
+}
+
+@keyframes eduverse-shadow-shift {
+  0%, 100% {
+    opacity: 0.7;
+    transform: translateX(-50%) scaleX(1);
+  }
+  50% {
+    opacity: 0.5;
+    transform: translateX(-50%) scaleX(0.95);
+  }
+}
+
+@keyframes eduverse-icon-float {
+  0%, 100% {
+    transform: translateY(0) translateX(0);
+    opacity: 0.8;
+  }
+  25% {
+    transform: translateY(-8px) translateX(4px);
+    opacity: 1;
+  }
+  50% {
+    transform: translateY(-12px) translateX(2px);
+    opacity: 0.9;
+  }
+  75% {
+    transform: translateY(-8px) translateX(-2px);
+    opacity: 1;
+  }
+}
+
+@keyframes eduverse-icon-float-alt {
+  0%, 100% {
+    transform: translateY(0) translateX(0);
+    opacity: 0.75;
+  }
+  25% {
+    transform: translateY(-6px) translateX(-3px);
+    opacity: 0.95;
+  }
+  50% {
+    transform: translateY(-10px) translateX(-5px);
+    opacity: 1;
+  }
+  75% {
+    transform: translateY(-6px) translateX(2px);
+    opacity: 0.9;
+  }
+}
+
+@keyframes eduverse-icon-float-slow {
+  0%, 100% {
+    transform: translateY(0) translateX(0);
+    opacity: 0.7;
+  }
+  33% {
+    transform: translateY(-7px) translateX(3px);
+    opacity: 0.95;
+  }
+  66% {
+    transform: translateY(-5px) translateX(-2px);
+    opacity: 1;
+  }
+}
+
+@keyframes eduverse-icon-float-reverse {
+  0%, 100% {
+    transform: translateY(0) translateX(0);
+    opacity: 0.8;
+  }
+  33% {
+    transform: translateY(-9px) translateX(-4px);
+    opacity: 1;
+  }
+  66% {
+    transform: translateY(-6px) translateX(3px);
+    opacity: 0.9;
+  }
+}
+
+@keyframes eduverse-icon-glow {
+  0%, 100% {
+    opacity: 0.2;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.4;
+    transform: scale(1.1);
+  }
+}
+
+@keyframes eduverse-icon-glow-slow {
+  0%, 100% {
+    opacity: 0.15;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.35;
+    transform: scale(1.15);
+  }
+}
+
+@keyframes eduverse-ambient-glow {
+  0%, 100% {
+    opacity: 0.5;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.7;
+    transform: scale(1.1);
+  }
+}
+
+@keyframes eduverse-ambient-glow-slow {
+  0%, 100% {
+    opacity: 0.5;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.65;
+    transform: scale(1.05);
+  }
+}
+
+@keyframes eduverse-shadow-pulse {
+  0%, 100% {
+    opacity: 0.6;
+    transform: translateX(-50%) scaleX(1);
+  }
+  50% {
+    opacity: 0.4;
+    transform: translateX(-50%) scaleX(0.9);
+  }
+}
+
+@keyframes eduverse-bg-gradient {
+  0%, 100% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+}
+
+@keyframes eduverse-path-draw {
+  0%, 100% {
+    stroke-dashoffset: 200;
+    opacity: 0.3;
+  }
+  50% {
+    stroke-dashoffset: 0;
+    opacity: 0.6;
+  }
+}
+
+@keyframes eduverse-path-draw-slow {
+  0%, 100% {
+    stroke-dashoffset: 180;
+    opacity: 0.25;
+  }
+  50% {
+    stroke-dashoffset: 0;
+    opacity: 0.5;
+  }
+}
+
+@layer utilities {
+  .animate-pulse-gentle {
+    animation: pulse-gentle 3s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  }
+  
+  .animate-bounce-subtle {
+    animation: bounce-subtle 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  }
+
+  .eduverse-float {
+    animation: eduverse-float 6s ease-in-out infinite;
+  }
+
+  .eduverse-float-slow {
+    animation: eduverse-float-slow 7.5s ease-in-out infinite;
+  }
+
+  .eduverse-breathe {
+    animation: eduverse-breathe 4s ease-in-out infinite;
+  }
+
+  .eduverse-breathe-slow {
+    animation: eduverse-breathe-slow 5s ease-in-out infinite;
+  }
+
+  .eduverse-head-tilt {
+    animation: eduverse-head-tilt 8s ease-in-out infinite;
+    transform-origin: 50% 65%;
+  }
+
+  .eduverse-head-tilt-alt {
+    animation: eduverse-head-tilt-alt 9s ease-in-out infinite;
+    transform-origin: 50% 65%;
+  }
+
+  .eduverse-blink-left {
+    animation: eduverse-blink-left 6s ease-in-out infinite;
+    transform-origin: center;
+  }
+
+  .eduverse-blink-right {
+    animation: eduverse-blink-right 6s ease-in-out infinite;
+    transform-origin: center;
+  }
+
+  .eduverse-blink-left-alt {
+    animation: eduverse-blink-left-alt 7s ease-in-out infinite;
+    transform-origin: center;
+  }
+
+  .eduverse-blink-right-alt {
+    animation: eduverse-blink-right-alt 7s ease-in-out infinite;
+    transform-origin: center;
+  }
+
+  .eduverse-smile {
+    animation: eduverse-smile 5s ease-in-out infinite;
+  }
+
+  .eduverse-tap {
+    animation: eduverse-tap 2.2s ease-in-out infinite;
+  }
+
+  .eduverse-tap-slow {
+    animation: eduverse-tap-slow 2.8s ease-in-out infinite;
+  }
+
+  .eduverse-screen-glow {
+    animation: eduverse-screen-glow 3s ease-in-out infinite;
+  }
+
+  .eduverse-screen-glow-slow {
+    animation: eduverse-screen-glow-slow 3.5s ease-in-out infinite;
+  }
+
+  .eduverse-tap-point {
+    animation: eduverse-tap-point 2.2s ease-in-out infinite;
+  }
+
+  .eduverse-tap-point-slow {
+    animation: eduverse-tap-point-slow 2.8s ease-in-out infinite;
+  }
+
+  .eduverse-hand-tap {
+    animation: eduverse-hand-tap 2.2s ease-in-out infinite;
+  }
+
+  .eduverse-hand-tap-slow {
+    animation: eduverse-hand-tap-slow 2.8s ease-in-out infinite;
+  }
+
+  .eduverse-shadow-shift {
+    animation: eduverse-shadow-shift 4s ease-in-out infinite;
+  }
+
+  .eduverse-icon-float {
+    animation: eduverse-icon-float 8s ease-in-out infinite;
+  }
+
+  .eduverse-icon-float-alt {
+    animation: eduverse-icon-float-alt 9s ease-in-out infinite;
+  }
+
+  .eduverse-icon-float-slow {
+    animation: eduverse-icon-float-slow 10s ease-in-out infinite;
+  }
+
+  .eduverse-icon-float-reverse {
+    animation: eduverse-icon-float-reverse 8.5s ease-in-out infinite;
+  }
+
+  .eduverse-icon-glow {
+    animation: eduverse-icon-glow 4s ease-in-out infinite;
+  }
+
+  .eduverse-icon-glow-slow {
+    animation: eduverse-icon-glow-slow 5s ease-in-out infinite;
+  }
+
+  .eduverse-ambient-glow {
+    animation: eduverse-ambient-glow 6s ease-in-out infinite;
+  }
+
+  .eduverse-ambient-glow-slow {
+    animation: eduverse-ambient-glow-slow 7s ease-in-out infinite;
+  }
+
+  .eduverse-shadow-pulse {
+    animation: eduverse-shadow-pulse 5s ease-in-out infinite;
+  }
+
+  .eduverse-bg-gradient {
+    background-size: 200% 200%;
+    animation: eduverse-bg-gradient 12s ease infinite;
+  }
+
+  .eduverse-path-draw {
+    stroke-dasharray: 200;
+    animation: eduverse-path-draw 10s ease-in-out infinite;
+  }
+
+  .eduverse-path-draw-slow {
+    stroke-dasharray: 180;
+    animation: eduverse-path-draw-slow 12s ease-in-out infinite;
+  }
+  
+  .shine-layer {
+    position: absolute;
+    top: 0;
+    left: -120%;
+    width: 120%;
+    height: 100%;
+    background: linear-gradient(
+      120deg,
+      transparent,
+      rgba(255, 255, 255, 0.4),
+      transparent
+    );
+    transform: skewX(-20deg);
+    pointer-events: none;
+  }
+  
+  .shine-animate .shine-layer {
+    animation: shineSweep 0.6s ease-in-out;
+  }
+
+  .login-left {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+    background: radial-gradient(circle at center, #edf8ff 0%, #f0f7ff 100%);
+  }
+
+  .hero-visual {
+    width: 100%;
+    height: 100%;
+    max-width: 800px;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .hero-visual__image {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    filter: drop-shadow(0 12px 24px rgba(0, 0, 0, 0.1));
+  }
+}
+
 @layer base {
   :root {
     --background: 210 60% 98%;

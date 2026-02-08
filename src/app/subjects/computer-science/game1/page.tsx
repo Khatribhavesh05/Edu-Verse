@@ -10,6 +10,7 @@ import { generateHint } from '@/ai/flows/generate-hint';
 import { Dialog, DialogContent, DialogTrigger, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Info, Binary, Brain } from 'lucide-react';
 import { shuffle } from 'lodash';
+import { playActionStartSound } from '@/lib/sound-effects';
 
 const LEVELS = 10;
 const TIME_LIMIT = 15; // seconds per question
@@ -94,6 +95,7 @@ const BinaryBlitzGame = () => {
     };
 
     const startGame = () => {
+        playActionStartSound();
         setLevel(0);
         setScore(0);
         setGameOver(false);

@@ -174,7 +174,7 @@ const Sidebar = React.forwardRef<
       return (
         <div
           className={cn(
-            "flex h-full w-[--sidebar-width] flex-col bg-gradient-to-b from-purple-200 to-blue-200 text-sidebar-foreground shadow-2xl",
+            "flex h-full w-[--sidebar-width] flex-col overflow-hidden bg-gradient-to-b from-purple-200 to-blue-200 text-sidebar-foreground shadow-2xl",
             className
           )}
           ref={ref}
@@ -199,7 +199,7 @@ const Sidebar = React.forwardRef<
             }
             side={side}
           >
-            <div className="flex h-full w-full flex-col">{children}</div>
+            <div className="flex h-full w-full flex-col overflow-hidden">{children}</div>
           </SheetContent>
         </Sheet>
       )
@@ -239,7 +239,7 @@ const Sidebar = React.forwardRef<
         >
           <div
             data-sidebar="sidebar"
-            className="flex h-full w-full flex-col bg-gradient-to-b from-lavender-300 to-blue-200 shadow-2xl group-data-[variant=floating]:rounded-2xl"
+            className="flex h-full w-full flex-col overflow-hidden bg-gradient-to-b from-lavender-300 to-blue-200 shadow-2xl group-data-[variant=floating]:rounded-2xl"
           >
             {children}
           </div>
@@ -349,7 +349,7 @@ const SidebarHeader = React.forwardRef<
     <div
       ref={ref}
       data-sidebar="header"
-      className={cn("flex flex-col gap-2 p-4", className)}
+      className={cn("flex flex-col gap-2 p-4 flex-shrink-0", className)}
       {...props}
     />
   )
@@ -364,7 +364,7 @@ const SidebarFooter = React.forwardRef<
     <div
       ref={ref}
       data-sidebar="footer"
-      className={cn("flex flex-col gap-2 p-4 mt-auto", className)}
+      className={cn("flex flex-col gap-2 p-4 mt-auto flex-shrink-0", className)}
       {...props}
     />
   )
@@ -395,7 +395,7 @@ const SidebarContent = React.forwardRef<
       ref={ref}
       data-sidebar="content"
       className={cn(
-        "flex min-h-0 flex-1 flex-col gap-2 overflow-auto group-data-[collapsible=icon]:overflow-hidden p-2",
+        "flex min-h-0 flex-1 flex-col gap-2 overflow-y-auto overflow-x-hidden group-data-[collapsible=icon]:overflow-hidden p-2",
         className
       )}
       {...props}

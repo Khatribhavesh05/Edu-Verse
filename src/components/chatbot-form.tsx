@@ -74,8 +74,8 @@ export function ChatbotForm() {
 
 
   return (
-    <div className="space-y-4 flex flex-col flex-1 h-full">
-       <Card ref={chatContainerRef} className="flex-1 overflow-y-auto p-4 space-y-4 bg-blue-50/50 rounded-2xl border-blue-200">
+    <div className="space-y-4 flex flex-col flex-1 h-full w-full">
+       <Card ref={chatContainerRef} className="flex-1 overflow-y-auto p-4 space-y-4 bg-blue-50/50 rounded-2xl border-blue-200 w-full">
         {messages.length === 0 && (
             <div className="flex items-center justify-center h-full text-foreground/70 text-center p-4">
                 Hi, I’m Orbi 🪐, your AI learning assistant! Ask me anything!

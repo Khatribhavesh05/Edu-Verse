@@ -6,6 +6,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import { textToSpeech } from '@/ai/flows/text-to-speech';
 import { Loader2, Volume2, PlayCircle, SkipForward } from 'lucide-react';
+import { playActionStartSound } from '@/lib/sound-effects';
 
 interface GameIntroductionProps {
   title: string;
@@ -48,8 +49,14 @@ export function GameIntroduction({ title, description, steps, onStartGame }: Gam
       setCurrentStep(s => s + 1);
     } else {
         // If it's the last step, the button should act as start game
+        playActionStartSound();
         onStartGame();
     }
+  };
+
+  const handleSkipToStart = () => {
+    playActionStartSound();
+    onStartGame();
   };
 
   const isLastStep = currentStep === steps.length - 1;
@@ -92,7 +99,7 @@ export function GameIntroduction({ title, description, steps, onStartGame }: Gam
       </div>
 
       <div className="flex gap-4 mt-8 w-full">
-         <Button onClick={onStartGame} variant="outline" className="w-full">
+         <Button onClick={handleSkipToStart} variant="outline" className="w-full">
             <SkipForward className="mr-2" /> Skip
         </Button>
         <Button onClick={handleNextStep} size="lg" className="w-full bg-accent hover:bg-accent/90 text-accent-foreground">

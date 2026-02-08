@@ -4,6 +4,7 @@ import './globals.css';
 import { AppLayout } from '@/components/layout/app-layout';
 import { Toaster } from '@/components/ui/toaster';
 import { cn } from '@/lib/utils';
+import { ConditionalLayout } from '@/components/layout/conditional-layout';
 
 export const metadata: Metadata = {
   title: 'EduVerse',
@@ -23,7 +24,7 @@ export default function RootLayout({
         <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;800;900&display=swap" rel="stylesheet" />
       </head>
       <body className={cn('font-body antialiased min-h-screen bg-gradient-to-br from-blue-50 via-purple-50 to-yellow-50')}>
-          <AppLayout>{children}</AppLayout>
+          <ConditionalLayout>{children}</ConditionalLayout>
           <Toaster />
       </body>
     </html>

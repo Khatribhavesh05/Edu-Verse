@@ -24,16 +24,6 @@ const QUESTIONS = [
   { question: "5 * x = 25", answer: "5", distractors: ["20", "30", "125"] },
 ];
 
-const intro = {
-  title: 'Welcome to Equation Quest!',
-  description: 'Orbi is here to guide you. Listen and learn how to play.',
-  steps: [
-    'I will show you an equation with a missing number, \'x\'.',
-    'Your job is to find the value of \'x\'.',
-    'Choose the correct number from the four options.',
-    'Solve them all to become an Equation Master. Good luck! 🪐',
-  ],
-};
 
 const EquationQuestGame = () => {
   const [level, setLevel] = useState(0);
@@ -101,14 +91,9 @@ const EquationQuestGame = () => {
   };
   
   if (!gameStarted) {
-    return (
-      <GameIntroduction
-        title={intro.title}
-        description={intro.description}
-        steps={intro.steps}
-        onStartGame={startGame}
-      />
-    );
+    // Start game immediately, no intro/guidance
+    startGame();
+    return null;
   }
 
   if (win) {

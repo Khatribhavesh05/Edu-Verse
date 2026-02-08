@@ -1,7 +1,15 @@
+'use client';
+
+import { useEffect } from 'react';
 import { TopicDescriptionForm } from '@/components/topic-description-form';
 import { BrainCircuit } from 'lucide-react';
+import { playPageTransitionSound } from '@/lib/sound-effects';
 
 export default function TopicDescriptionPage() {
+  useEffect(() => {
+    playPageTransitionSound();
+  }, []);
+
   return (
     <div className="flex flex-col gap-8 max-w-2xl mx-auto">
       <section className="text-center">
