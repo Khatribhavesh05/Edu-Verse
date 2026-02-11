@@ -32,7 +32,7 @@ export async function chat(input: ChatInput): Promise<ChatOutput> {
       { role: 'user', content: input.message },
     ],
     temperature: 0.7,
-    max_tokens: 512,
+    max_tokens: 128, // Limit response length
   });
   return { response: completion.choices[0]?.message?.content || '' };
 }

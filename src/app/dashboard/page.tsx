@@ -1,7 +1,7 @@
 
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, useMemo } from 'react';
 import { Card, CardHeader, CardTitle, CardContent, CardDescription } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
 import { Badge } from '@/components/ui/badge';
@@ -12,45 +12,64 @@ import MoodGuideModal from '@/components/mood-guide-modal';
 import { ParentProgressSnapshot } from '@/components/parent-progress-snapshot';
 import { TodaysHighlight } from '@/components/todays-highlight';
 import { playPageTransitionSound } from '@/lib/sound-effects';
-
-// Static data for the prototype dashboard
-const staticProgress = {
-  'game1-math': { score: 80 },
-  'game2-math': { score: 65 },
-  'game1-science': { score: 90 },
-  'game1-english': { score: 75 },
-};
-
-const staticUnlockedBadges = ['Equation Master', 'Ecosystem Expert', 'Grammar Guru'];
+import { useGameStats } from '@/hooks/use-game-stats';
+import { useUserAchievements } from '@/hooks/use-achievements';
 
 export default function DashboardPage() {
   useEffect(() => {
     playPageTransitionSound();
   }, []);
 
-  const progress = staticProgress;
-  const unlockedBadges = staticUnlockedBadges;
+  const { activities } = useGameStats();
+  const { achievements: earnedAchievements } = useUserAchievements();
 
-  const totalPoints = Object.values(progress).reduce((acc, game) => {
-    return acc + (game.score || 0);
-  }, 0);
+  const progressEntries = useMemo(() => {
+    const map = new Map<
+      string,
+      { label: string; gameType: 'math' | 'science' | 'language'; correct: number; total: number }
+    >();
 
-  const playedGamesCount = Object.keys(progress).length;
+    activities.forEach((activity) => {
+      const key = `${activity.gameId}-${activity.gameType}`;
+      const existing = map.get(key) ?? {
+        label: activity.gameName || activity.gameId,
+        gameType: activity.gameType,
+        correct: 0,
+        total: 0,
+      };
+
+      existing.correct += activity.correctAnswers;
+      existing.total += activity.totalQuestions;
+      map.set(key, existing);
+    });
+
+    return Array.from(map.values()).map((entry) => ({
+      label: entry.label,
+      score: entry.total > 0 ? Math.round((entry.correct / entry.total) * 100) : 0,
+      gameType: entry.gameType,
+    }));
+  }, [activities]);
+
+  const totalPoints = useMemo(
+    () => Math.round(activities.reduce((sum, activity) => sum + activity.correctAnswers * 10, 0)),
+    [activities]
+  );
+
+  const playedGamesCount = progressEntries.length;
   const totalGamesCount = games.length;
   const overallProgress = totalGamesCount > 0 ? (playedGamesCount / totalGamesCount) * 100 : 0;
-  
-  const displayedBadges = allBadges.filter(b => unlockedBadges.includes(b.name));
 
-  // Detect if user has activity today
-  const hasActivityToday = playedGamesCount > 0;
-  
-  // Determine activity type for personalized message
-  const activityType = hasActivityToday ? (
-    Object.keys(progress).some(key => key.includes('math')) ? 'math' :
-    Object.keys(progress).some(key => key.includes('science')) ? 'science' :
-    Object.keys(progress).some(key => key.includes('english')) ? 'english' :
-    'general'
-  ) : 'general';
+  const hasActivityToday = activities.length > 0;
+  const activityType = useMemo(() => {
+    if (!hasActivityToday) return 'general';
+    if (activities.some((activity) => activity.gameType === 'math')) return 'math';
+    if (activities.some((activity) => activity.gameType === 'science')) return 'science';
+    if (activities.some((activity) => activity.gameType === 'language')) return 'english';
+    return 'general';
+  }, [activities, hasActivityToday]);
+
+  const unlockedBadgeNames = earnedAchievements.map((achievement) => achievement.name);
+  const displayedBadges = allBadges.filter((badge) => unlockedBadgeNames.includes(badge.name));
 
   return (
     <motion.div 
@@ -88,28 +107,34 @@ export default function DashboardPage() {
             <CardDescription className="text-lg">You've played {playedGamesCount} out of {totalGamesCount} available games.</CardDescription>
           </CardHeader>
           <CardContent className="grid gap-6">
-             <div className="grid gap-2">
-                <div className="flex justify-between font-bold text-lg">
-                  <span>Overall Progress</span>
-                  <span>{Math.round(overallProgress)}%</span>
-                </div>
-                <Progress value={overallProgress} aria-label="Overall learning progress" />
+            <div className="grid gap-2">
+              <div className="flex justify-between font-bold text-lg">
+                <span>Overall Progress</span>
+                <span>{Math.round(overallProgress)}%</span>
               </div>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                {Object.entries(progress).map(([gameSlug, gameData]) => {
-                    const gameName = games.find(g => g.slug === gameSlug.replace(/-\w+$/, ''))?.name || gameSlug;
-                    return (
-                        <motion.div 
-                          key={gameSlug} 
-                          className="p-4 bg-blue-100 rounded-2xl border-2 border-blue-200"
-                          whileHover={{ scale: 1.05 }}
-                        >
-                            <h4 className="font-bold text-blue-700 text-xl">{gameName}</h4>
-                            <p className="text-lg text-blue-600/80">Score: {gameData.score || 0}</p>
-                        </motion.div>
-                    )
-                })}
+              <Progress value={overallProgress} aria-label="Overall learning progress" />
             </div>
+            {progressEntries.length > 0 ? (
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                {progressEntries.map((entry) => (
+                  <motion.div
+                    key={entry.label}
+                    className="p-4 bg-blue-100 rounded-2xl border-2 border-blue-200"
+                    whileHover={{ scale: 1.05 }}
+                  >
+                    <h4 className="font-bold text-blue-700 text-xl">{entry.label}</h4>
+                    <p className="text-sm uppercase tracking-wide text-blue-500/80">
+                      {entry.gameType}
+                    </p>
+                    <p className="text-lg text-blue-600/80">Score: {entry.score}%</p>
+                  </motion.div>
+                ))}
+              </div>
+            ) : (
+              <div className="p-6 rounded-2xl border-2 border-dashed border-blue-200 bg-blue-50 text-center text-foreground/70">
+                Play a mini-game to see your progress cards here!
+              </div>
+            )}
           </CardContent>
         </Card>
 
@@ -127,7 +152,7 @@ export default function DashboardPage() {
             <Card className="shadow-2xl bg-white">
                 <CardHeader>
                     <CardTitle className="text-3xl">My Sticker Book</CardTitle>
-                    <CardDescription className="text-lg">{unlockedBadges.length} out of {allBadges.length} earned.</CardDescription>
+                <CardDescription className="text-lg">{displayedBadges.length} out of {allBadges.length} earned.</CardDescription>
                 </CardHeader>
                 <CardContent className="flex flex-wrap gap-4">
                     {displayedBadges.length > 0 ? displayedBadges.map((badge, i) => {

@@ -6,6 +6,8 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Mic, Sparkles, Volume2, XCircle } from 'lucide-react';
+import { auth } from '@/lib/firebase';
+import { saveAIChatMessage } from '@/lib/firestore-ai-chat';
 
 type VoicePhase = 'idle' | 'listening' | 'heard' | 'response';
 
@@ -19,12 +21,28 @@ const prompts: Prompt[] = [
   { label: 'Repeat: The quick brown fox' },
 ];
 
+const VOICE_CHAT_ID = 'voice';
+
 export function VoiceLearning() {
   const [phase, setPhase] = useState<VoicePhase>('idle');
   const [message, setMessage] = useState('');
   const [response, setResponse] = useState('');
   const [activePromptIndex, setActivePromptIndex] = useState(0);
   const recognitionRef = useRef<any>(null);
+  const persistVoiceMessage = async (role: 'user' | 'assistant', content: string) => {
+    if (!content) return;
+    const user = auth.currentUser;
+    if (!user) return;
+    try {
+      await saveAIChatMessage(user.uid, VOICE_CHAT_ID, {
+        role,
+        content,
+        timestamp: new Date().toISOString(),
+      });
+    } catch (error) {
+      console.error('Failed to log voice message:', error);
+    }
+  };
   useEffect(() => {
     setActivePromptIndex(Math.floor(Math.random() * prompts.length));
     return () => {
@@ -53,6 +71,7 @@ export function VoiceLearning() {
       const transcript = event.results[0][0].transcript;
       setPhase('heard');
       setMessage(`You said: "${transcript}"`);
+      persistVoiceMessage('user', transcript);
       setPhase('response');
       setMessage('Thinking…');
       try {
@@ -66,6 +85,7 @@ export function VoiceLearning() {
         setResponse(data.reply);
         const audio = new Audio(data.audio);
         audio.play();
+        persistVoiceMessage('assistant', data.reply);
       } catch (err) {
         setMessage('Sorry, Orbi could not reply.');
         setResponse('');

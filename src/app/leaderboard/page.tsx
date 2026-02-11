@@ -3,11 +3,14 @@
 import { useMemo, useEffect } from 'react';
 import { RecognitionCard } from '@/components/recognition-card';
 import { playPageTransitionSound } from '@/lib/sound-effects';
+import { Card, CardContent } from '@/components/ui/card';
+import { useLeaderboardEntries } from '@/hooks/use-leaderboard';
 
 export default function LeaderboardPage() {
   useEffect(() => {
     playPageTransitionSound();
   }, []);
+  const { entries, loading } = useLeaderboardEntries('friendly', 5);
   // Demo explorer names
   const demoNames = [
     'Explorer Alex',
@@ -94,6 +97,47 @@ export default function LeaderboardPage() {
           />
         ))}
       </div>
+
+      {/* Live Leaderboard */}
+      <section className="space-y-4">
+        <div className="flex items-center justify-between">
+          <h2 className="text-3xl font-bold text-foreground">Today's Friendly Rankings</h2>
+          <p className="text-sm text-foreground/60">
+            {loading ? 'Refreshing...' : `${entries.length} player${entries.length === 1 ? '' : 's'}`}
+          </p>
+        </div>
+        {loading ? (
+          <div className="rounded-3xl border border-dashed border-orange-300 bg-orange-50 p-6 text-center text-foreground/70">
+            Loading leaderboard…
+          </div>
+        ) : entries.length === 0 ? (
+          <div className="rounded-3xl border border-dashed border-orange-300 bg-orange-50 p-6 text-center text-foreground/70">
+            Complete a learning activity today to appear on this friendly board!
+          </div>
+        ) : (
+          <div className="grid gap-4">
+            {entries.map((entry, index) => (
+              <Card
+                key={`${entry.userId}-${entry.date}-${index}`}
+                className="border-2 border-orange-200 bg-white/80 shadow-sm"
+              >
+                <CardContent className="space-y-2">
+                  <div className="flex items-center justify-between">
+                    <p className="text-xl font-bold text-orange-600">
+                      #{index + 1} {entry.userName || 'Explorer'}
+                    </p>
+                    <span className="text-xs text-foreground/60">{entry.gameId}</span>
+                  </div>
+                  <div className="text-5xl font-black text-orange-500">{entry.score}</div>
+                  <p className="text-sm text-foreground/60">
+                    {entry.date ? new Date(entry.date).toLocaleDateString() : 'Today'}
+                  </p>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        )}
+      </section>
 
       {/* Footer Message */}
       <div className="mt-8 p-8 bg-gradient-to-br from-purple-100 to-pink-100 rounded-3xl border-3 border-purple-200 text-center space-y-3">

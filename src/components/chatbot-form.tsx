@@ -8,6 +8,8 @@ import { Input } from '@/components/ui/input';
 import { Card } from '@/components/ui/card';
 import { Send, Loader2, User } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import { auth } from '@/lib/firebase';
+import { getAIChatMessages, saveAIChatMessage } from '@/lib/firestore-ai-chat';
 
 const initialState: FormState = {
   message: '',
@@ -16,9 +18,12 @@ const initialState: FormState = {
 };
 
 type ChatMessage = {
-    role: 'user' | 'bot';
-    content: string;
-}
+  role: 'user' | 'assistant';
+  content: string;
+  timestamp?: string;
+};
+
+const CHAT_ID = 'default';
 
 function SubmitButton() {
   const { pending } = useFormStatus();
@@ -43,18 +48,80 @@ export function ChatbotForm() {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const chatContainerRef = useRef<HTMLDivElement>(null);
   
+  const appendMessage = (message: ChatMessage) => {
+    setMessages((prev) => {
+      const lastMessage = prev[prev.length - 1];
+      if (lastMessage?.role === message.role && lastMessage?.content === message.content) {
+        return prev;
+      }
+      return [...prev, message];
+    });
+  };
+
+  const persistMessage = async (role: 'user' | 'assistant', content: string) => {
+    if (!content) return;
+    const user = auth.currentUser;
+    if (!user) return;
+    try {
+      await saveAIChatMessage(user.uid, CHAT_ID, {
+        role,
+        content,
+        timestamp: new Date().toISOString(),
+      });
+    } catch (error) {
+      console.error('Failed to save chat message', error);
+    }
+  };
+
+  useEffect(() => {
+    let isMounted = true;
+
+    const loadHistory = async (userId: string) => {
+      try {
+        const history = await getAIChatMessages(userId, CHAT_ID);
+        if (!isMounted) return;
+        setMessages(
+          history.map((entry) => ({
+            role: entry.role,
+            content: entry.content,
+            timestamp: entry.timestamp,
+          }))
+        );
+      } catch (error) {
+        console.error('Failed to load chat history:', error);
+      }
+    };
+
+    const unsubscribe = auth.onAuthStateChanged((user) => {
+      if (user) {
+        loadHistory(user.uid);
+      } else {
+        setMessages([]);
+      }
+    });
+
+    return () => {
+      isMounted = false;
+      unsubscribe();
+    };
+  }, []);
+  
   const clientAction = (formData: FormData) => {
     const message = formData.get('message');
     if (typeof message === 'string' && message.trim().length > 0) {
-        setMessages(prev => [...prev, {role: 'user', content: message}]);
+      const trimmed = message.trim();
+      appendMessage({ role: 'user', content: trimmed });
+      persistMessage('user', trimmed);
     }
     formAction(formData);
-  }
+  };
 
   useEffect(() => {
     if (state.message) {
       if (state.message === 'Success' && state.response) {
-        setMessages(prev => [...prev, {role: 'bot', content: state.response as string}]);
+        const responseText = state.response as string;
+        appendMessage({ role: 'assistant', content: responseText });
+        persistMessage('assistant', responseText);
         formRef.current?.reset();
       } else if (state.message !== 'Validation failed' && state.message !== 'Success') {
          toast({
@@ -83,7 +150,7 @@ export function ChatbotForm() {
         )}
         {messages.map((msg, index) => (
             <div key={index} className={`flex items-start gap-3 ${msg.role === 'user' ? 'justify-end' : ''}`}>
-                {msg.role === 'bot' && <span className="w-8 h-8 text-3xl flex-shrink-0 mt-1">🪐</span>}
+                {msg.role === 'assistant' && <span className="w-8 h-8 text-3xl flex-shrink-0 mt-1">🪐</span>}
                 <div className={`rounded-2xl px-4 py-2 max-w-[80%] shadow-sm ${msg.role === 'user' ? 'bg-blue-500 text-white' : 'bg-white'}`}>
                     <p className="text-base whitespace-pre-wrap">{msg.content}</p>
                 </div>

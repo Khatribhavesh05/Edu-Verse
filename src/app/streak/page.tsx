@@ -4,10 +4,12 @@ import { useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { StreakSystem } from '@/components/streak-system';
 import { playStreakSound } from '@/lib/sound-effects';
+import { useStreak } from '@/hooks/use-streak';
 
 export default function StreakPage() {
-  // In a real app, this would come from user data/state
-  const currentStreak = 7;
+  const streakData = useStreak();
+  const currentStreak = streakData?.currentStreak ?? 0;
+  const longestStreak = streakData?.longestStreak ?? 0;
 
   // Play streak sound when page loads
   useEffect(() => {
@@ -37,7 +39,12 @@ export default function StreakPage() {
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5, delay: 0.2 }}
       >
-        <StreakSystem streakDays={currentStreak} showRewards={true} />
+        <div className="space-y-3">
+          <StreakSystem streakDays={currentStreak} showRewards={true} />
+          <p className="text-center text-sm text-foreground/60">
+            Longest streak recorded: {longestStreak} day{longestStreak === 1 ? '' : 's'}
+          </p>
+        </div>
       </motion.div>
 
       {/* Motivational Section */}

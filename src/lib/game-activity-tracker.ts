@@ -1,22 +1,10 @@
+import { auth } from '@/lib/firebase';
+import { logGameActivityFirestore } from '@/lib/firestore-game-activity';
+import { recordDailyStreak } from '@/lib/firestore-streaks';
+import type { GameActivity, DailyGameStats } from '@/lib/types/game-activity';
+
 // Game Activity Tracker - Shared state for mini-game activities
 // Stores in localStorage and provides real-time access to game data
-
-export interface GameActivity {
-  gameId: string;
-  gameName: string;
-  gameType: 'math' | 'language' | 'science';
-  startTime: number;
-  endTime?: number;
-  totalTime?: number; // in seconds
-  correctAnswers: number;
-  totalQuestions: number;
-  completedAt?: string;
-}
-
-export interface DailyGameStats {
-  date: string;
-  activities: GameActivity[];
-}
 
 const STORAGE_KEY = 'eduverse-game-activities';
 
@@ -67,6 +55,16 @@ export function logGameActivity(activity: GameActivity): void {
 
     // Trigger a storage event for real-time updates
     window.dispatchEvent(new Event('game-activity-updated'));
+
+    const userId = auth.currentUser?.uid;
+    if (userId) {
+      logGameActivityFirestore(userId, completeActivity).catch((error) => {
+        console.error('Failed to sync game activity to Firestore:', error);
+      });
+      recordDailyStreak(userId, completeActivity.completedAt ?? new Date().toISOString()).catch((error) => {
+        console.error('Failed to update streak after activity:', error);
+      });
+    }
   } catch (error) {
     console.error('Failed to log game activity:', error);
   }
