@@ -7,10 +7,7 @@ import { Progress } from '@/components/ui/progress';
 import { Badge } from '@/components/ui/badge';
 import { badges as allBadges, games } from '@/lib/constants';
 import { motion } from 'framer-motion';
-import DailyQuestCard from '@/components/daily-quest';
 import MoodGuideModal from '@/components/mood-guide-modal';
-import { ParentProgressSnapshot } from '@/components/parent-progress-snapshot';
-import { TodaysHighlight } from '@/components/todays-highlight';
 import { playPageTransitionSound } from '@/lib/sound-effects';
 import { useGameStats } from '@/hooks/use-game-stats';
 import { useUserAchievements } from '@/hooks/use-achievements';
@@ -59,15 +56,6 @@ export default function DashboardPage() {
   const totalGamesCount = games.length;
   const overallProgress = totalGamesCount > 0 ? (playedGamesCount / totalGamesCount) * 100 : 0;
 
-  const hasActivityToday = activities.length > 0;
-  const activityType = useMemo(() => {
-    if (!hasActivityToday) return 'general';
-    if (activities.some((activity) => activity.gameType === 'math')) return 'math';
-    if (activities.some((activity) => activity.gameType === 'science')) return 'science';
-    if (activities.some((activity) => activity.gameType === 'language')) return 'english';
-    return 'general';
-  }, [activities, hasActivityToday]);
-
   const unlockedBadgeNames = earnedAchievements.map((achievement) => achievement.name);
   const displayedBadges = allBadges.filter((badge) => unlockedBadgeNames.includes(badge.name));
 
@@ -83,23 +71,6 @@ export default function DashboardPage() {
         <p className="text-xl text-brand-text-light mt-1">Here's your awesome progress. Keep it up! 🚀</p>
       </section>
 
-      {/* Today's Highlight Card */}
-      <section>
-        <TodaysHighlight 
-          hasActivity={hasActivityToday}
-          activityType={activityType as 'math' | 'science' | 'english' | 'general'}
-        />
-      </section>
-
-        <section>
-          <ParentProgressSnapshot />
-        </section>
-
-      {/* Daily Learning Quest */}
-      <section>
-        <DailyQuestCard />
-      </section>
-      
       <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
         <Card className="lg:col-span-2 shadow-2xl bg-white">
           <CardHeader>
