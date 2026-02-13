@@ -53,17 +53,32 @@ export function logGameActivity(activity: GameActivity): void {
     stats.activities.push(completeActivity);
     localStorage.setItem(STORAGE_KEY, JSON.stringify(stats));
 
+    // Unlock surprise box when a game is completed
+    localStorage.setItem('eduverse_task_completed', 'true');
+
     // Trigger a storage event for real-time updates
     window.dispatchEvent(new Event('game-activity-updated'));
 
     const userId = auth.currentUser?.uid;
     if (userId) {
-      logGameActivityFirestore(userId, completeActivity).catch((error) => {
-        console.error('Failed to sync game activity to Firestore:', error);
-      });
-      recordDailyStreak(userId, completeActivity.completedAt ?? new Date().toISOString()).catch((error) => {
-        console.error('Failed to update streak after activity:', error);
-      });
+      console.log('✅ User authenticated, logging activity for user:', userId);
+      logGameActivityFirestore(userId, completeActivity)
+        .then(() => {
+          console.log('✅ Game activity logged to Firestore');
+        })
+        .catch((error) => {
+          console.error('❌ Failed to sync game activity to Firestore:', error);
+        });
+      recordDailyStreak(userId, 'learning')
+        .then(() => {
+          console.log('✅ Streak updated successfully!');
+        })
+        .catch((error) => {
+          console.error('❌ Failed to update streak after activity:', error);
+        });
+    } else {
+      console.error('❌ No user authenticated. Cannot log activity or update streak.');
+      console.log('Auth state:', auth.currentUser);
     }
   } catch (error) {
     console.error('Failed to log game activity:', error);
@@ -71,7 +86,7 @@ export function logGameActivity(activity: GameActivity): void {
 }
 
 // Start tracking a game (returns startTime)
-export function startGameTracking(gameId: string, gameName: string, gameType: 'math' | 'language' | 'science'): number {
+export function startGameTracking(gameId: string, gameName: string, gameType: 'math' | 'language' | 'science' | 'computer-science' | 'general-knowledge' | 'social-studies'): number {
   const startTime = Date.now();
   return startTime;
 }
@@ -80,7 +95,7 @@ export function startGameTracking(gameId: string, gameName: string, gameType: 'm
 export function endGameTracking(
   gameId: string,
   gameName: string,
-  gameType: 'math' | 'language' | 'science',
+  gameType: 'math' | 'language' | 'science' | 'computer-science' | 'general-knowledge' | 'social-studies',
   startTime: number,
   correctAnswers: number,
   totalQuestions: number

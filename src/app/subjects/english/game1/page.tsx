@@ -12,6 +12,7 @@ import { generateHint } from '@/ai/flows/generate-hint';
 import { Dialog, DialogContent, DialogTrigger, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Info, PenLine } from 'lucide-react';
 import { shuffle } from 'lodash';
+import { endGameTracking } from '@/lib/game-activity-tracker';
 
 const ItemTypes = {
   WORD: 'word',
@@ -87,6 +88,7 @@ const WordWeaverGame = () => {
   const [gameStarted, setGameStarted] = useState(false);
   const [hint, setHint] = useState<{ title: string; description: string | null }>({ title: '', description: null });
   const [isHintLoading, setIsHintLoading] = useState(false);
+  const [startTime] = useState<number>(Date.now());
   
   const { toast } = useToast();
   const originalSentence = useMemo(() => SENTENCES[level], [level]);
@@ -116,6 +118,7 @@ const WordWeaverGame = () => {
       if (level < SENTENCES.length - 1) {
         setLevel(l => l + 1);
       } else {
+        endGameTracking('language-word-weaver', 'Word Weaver', 'language', startTime, score / 10 + 1, SENTENCES.length);
         setWin(true);
       }
     } else {

@@ -9,6 +9,7 @@ import { generateHint } from '@/ai/flows/generate-hint';
 import { Dialog, DialogContent, DialogTrigger, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Info, Lightbulb } from 'lucide-react';
 import { shuffle } from 'lodash';
+import { endGameTracking } from '@/lib/game-activity-tracker';
 
 const INVENTIONS = [
   { name: "The Printing Press", period: "15th Century" },
@@ -32,6 +33,7 @@ const InventionTimelineGame = () => {
   
   const [hint, setHint] = useState<{ title: string; description: string | null }>({ title: '', description: null });
   const [isHintLoading, setIsHintLoading] = useState(false);
+  const [startTime] = useState<number>(Date.now());
   
   const { toast } = useToast();
   const currentInvention = useMemo(() => shuffledInventions[level], [shuffledInventions, level]);
@@ -47,6 +49,7 @@ const InventionTimelineGame = () => {
     if (level < shuffledInventions.length - 1) {
       setLevel(l => l + 1);
     } else {
+      endGameTracking('general-knowledge-invention', 'Invention Timeline', 'general-knowledge', startTime, score / 10, shuffledInventions.length);
       setWin(true);
     }
   };

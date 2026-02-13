@@ -10,6 +10,7 @@ import { Info, Brain } from 'lucide-react';
 import { shuffle } from 'lodash';
 import { GameIntroduction } from '@/components/game-introduction';
 import { GameFeedback } from '@/components/game-feedback';
+import { endGameTracking } from '@/lib/game-activity-tracker';
 
 const QUESTIONS = [
   { question: "x + 5 = 12", answer: "7", distractors: ["5", "17", "6"] },
@@ -33,6 +34,7 @@ const EquationQuestGame = () => {
   const [shuffledQuestions, setShuffledQuestions] = useState(QUESTIONS);
   const [options, setOptions] = useState<string[]>([]);
   const [feedback, setFeedback] = useState<'correct' | 'incorrect' | null>(null);
+  const [startTime] = useState<number>(Date.now());
   
   const [hint, setHint] = useState<{ title: string; description: string | null }>({ title: '', description: null });
   const [isHintLoading, setIsHintLoading] = useState(false);
@@ -65,6 +67,8 @@ const EquationQuestGame = () => {
     if (level < shuffledQuestions.length - 1) {
       setLevel(l => l + 1);
     } else {
+      const correctAnswers = score / 10;
+      endGameTracking('math-equation-quest', 'Equation Quest', 'math', startTime, correctAnswers, shuffledQuestions.length);
       setWin(true);
     }
   };

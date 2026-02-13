@@ -10,6 +10,7 @@ import { generateHint } from '@/ai/flows/generate-hint';
 import { Dialog, DialogContent, DialogTrigger, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Info, Shapes } from 'lucide-react';
 import { shuffle } from 'lodash';
+import { endGameTracking } from '@/lib/game-activity-tracker';
 
 const CATEGORIES = [
   { category: "Planets", items: ["Mars", "Venus", "Earth"], oddOneOut: "Moon" },
@@ -32,6 +33,7 @@ const CategoryConundrumGame = () => {
   
   const [hint, setHint] = useState<{ title: string; description: string | null }>({ title: '', description: null });
   const [isHintLoading, setIsHintLoading] = useState(false);
+  const [startTime] = useState<number>(Date.now());
   
   const { toast } = useToast();
   const currentCategory = useMemo(() => shuffledCategories[level], [shuffledCategories, level]);
@@ -59,6 +61,7 @@ const CategoryConundrumGame = () => {
     if (level < shuffledCategories.length - 1) {
       setLevel(l => l + 1);
     } else {
+      endGameTracking('general-knowledge-category', 'Category Conundrum', 'general-knowledge', startTime, score / 10, shuffledCategories.length);
       setWin(true);
     }
   };

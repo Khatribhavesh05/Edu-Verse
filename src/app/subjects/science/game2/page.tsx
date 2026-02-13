@@ -9,6 +9,7 @@ import { Dialog, DialogContent, DialogTrigger, DialogHeader, DialogTitle } from 
 import { Info, PlusCircle, MinusCircle } from 'lucide-react';
 import { motion } from 'framer-motion';
 import Confetti from 'react-confetti';
+import { endGameTracking } from '@/lib/game-activity-tracker';
 
 const EcosystemBalanceGame = () => {
   const [day, setDay] = useState(0);
@@ -21,6 +22,7 @@ const EcosystemBalanceGame = () => {
   const [gameStarted, setGameStarted] = useState(false);
   const [hint, setHint] = useState<{ title: string; description: string | null }>({ title: '', description: null });
   const [isHintLoading, setIsHintLoading] = useState(false);
+  const [startTime] = useState<number>(Date.now());
   const { toast } = useToast();
 
   const MAX_DAYS = 20;
@@ -67,6 +69,7 @@ const EcosystemBalanceGame = () => {
       setGameOver(true);
       toast({ variant: 'destructive', title: "Ecosystem Collapse!", description: "A species was wiped out." });
     } else if (day >= MAX_DAYS && !gameOver) {
+      endGameTracking('science-ecosystem-balance', 'Ecosystem Balance', 'science', startTime, 1, 1);
       setWin(true);
       setGameOver(true);
     }

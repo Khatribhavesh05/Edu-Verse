@@ -11,6 +11,7 @@ import { generateHint } from '@/ai/flows/generate-hint';
 import { Dialog, DialogContent, DialogTrigger, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Info, Blocks } from 'lucide-react';
 import { shuffle } from 'lodash';
+import { endGameTracking } from '@/lib/game-activity-tracker';
 
 const ItemTypes = {
   PARAGRAPH: 'paragraph',
@@ -73,6 +74,7 @@ const StoryScramblerGame = () => {
   const [hint, setHint] = useState<{ title: string; description: string | null }>({ title: '', description: null });
   const [isHintLoading, setIsHintLoading] = useState(false);
   const [storiesCompleted, setStoriesCompleted] = useState(0);
+  const [startTime] = useState<number>(Date.now());
   
   const { toast } = useToast();
   const currentStory = useMemo(() => STORIES[level], [level]);
@@ -99,6 +101,7 @@ const StoryScramblerGame = () => {
       if (level < STORIES.length - 1) {
         setLevel(l => l + 1);
       } else {
+        endGameTracking('language-story-scrambler', 'Story Scrambler', 'language', startTime, storiesCompleted + 1, STORIES.length);
         setWin(true);
       }
     } else {

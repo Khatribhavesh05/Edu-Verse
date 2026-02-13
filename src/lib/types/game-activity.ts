@@ -1,7 +1,7 @@
 export interface GameActivity {
   gameId: string;
   gameName: string;
-  gameType: 'math' | 'language' | 'science';
+  gameType: 'math' | 'language' | 'science' | 'computer-science' | 'general-knowledge' | 'social-studies';
   startTime: number;
   endTime?: number;
   totalTime?: number;

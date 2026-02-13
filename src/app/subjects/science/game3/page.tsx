@@ -11,6 +11,7 @@ import { Dialog, DialogContent, DialogTrigger, DialogHeader, DialogTitle } from 
 import { Info, RotateCcw } from 'lucide-react';
 import { DndProvider, useDrag, useDrop } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
+import { endGameTracking } from '@/lib/game-activity-tracker';
 
 const ItemTypes = {
   ATOM: 'atom',
@@ -92,6 +93,7 @@ const ChemistryLabGame = () => {
 
   const [hint, setHint] = useState<{ title: string; description: string | null }>({ title: '', description: null });
   const [isHintLoading, setIsHintLoading] = useState(false);
+  const [startTime] = useState<number>(Date.now());
   const { toast } = useToast();
 
   const currentLevel = useMemo(() => LEVELS[levelIndex], [levelIndex]);
@@ -116,6 +118,7 @@ const ChemistryLabGame = () => {
       if (levelIndex < LEVELS.length - 1) {
         setLevelIndex(i => i + 1);
       } else {
+        endGameTracking('science-chemistry-lab', 'Chemistry Lab', 'science', startTime, score / 10 + 1, LEVELS.length);
         setWin(true);
       }
       setDroppedAtoms([]);

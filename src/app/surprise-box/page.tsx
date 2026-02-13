@@ -17,28 +17,52 @@ type Reward = {
 
 const rewards: Reward[] = [
   {
+    title: 'Bonus XP',
+    description: 'You earned +50 XP to boost your learning progress!',
+    icon: '⚡',
+    accent: 'from-yellow-400 to-yellow-500',
+  },
+  {
     title: 'Sticker Pack',
-    description: 'You earned a rainbow sticker pack for your notebook!',
-    icon: '🌈',
+    description: 'You unlocked a shiny sticker pack for your collection!',
+    icon: '✨',
     accent: 'from-pink-400 to-pink-500',
   },
   {
-    title: 'Pet Accessory',
-    description: 'A cozy scarf for your learning pet is now unlocked!',
-    icon: '🧣',
+    title: 'Achievement Badge',
+    description: 'A special badge has been added to your achievements wall!',
+    icon: '🏆',
+    accent: 'from-orange-400 to-orange-500',
+  },
+  {
+    title: 'Streak Boost',
+    description: 'Your learning streak has been boosted by 1 extra day!',
+    icon: '🔥',
+    accent: 'from-red-400 to-red-500',
+  },
+  {
+    title: 'Knowledge Points',
+    description: 'You earned +100 Knowledge Points for your progress!',
+    icon: '🧠',
     accent: 'from-purple-400 to-purple-500',
   },
   {
-    title: 'Fun Fact',
-    description: 'Did you know? Octopuses have three hearts!',
-    icon: '🐙',
+    title: 'Star Reward',
+    description: 'You earned a golden star for your excellent performance!',
+    icon: '⭐',
+    accent: 'from-yellow-400 to-orange-400',
+  },
+  {
+    title: 'Level Up!',
+    description: 'Congratulations! You advanced to the next learning level!',
+    icon: '🎮',
     accent: 'from-blue-400 to-blue-500',
   },
   {
-    title: 'Bonus XP',
-    description: 'You gained +50 XP to boost your learning streak!',
-    icon: '⚡',
-    accent: 'from-yellow-400 to-yellow-500',
+    title: 'Confidence Boost',
+    description: 'Your confidence meter is now fully charged! Keep it up!',
+    icon: '💪',
+    accent: 'from-green-400 to-green-500',
   },
 ];
 
@@ -50,15 +74,50 @@ export default function SurpriseBoxPage() {
   const [reward, setReward] = useState<Reward | null>(null);
   const [showConfetti, setShowConfetti] = useState(false);
   const [showScratchCard, setShowScratchCard] = useState(false);
+  const [gamesPlayedToday, setGamesPlayedToday] = useState(0);
+  const GAMES_NEEDED_FOR_SURPRISE = 1; // One game unlocks a surprise
 
   useEffect(() => {
     playPageTransitionSound();
-    try {
-      const completed = localStorage.getItem('eduverse_task_completed') === 'true';
-      setIsUnlocked(completed);
-    } catch {
-      setIsUnlocked(false);
-    }
+    
+    // Check if task is already completed and count games played today
+    const checkTaskCompletion = () => {
+      try {
+        const completed = localStorage.getItem('eduverse_task_completed') === 'true';
+        setIsUnlocked(completed);
+
+        // Count games played today
+        const STORAGE_KEY = 'eduverse-game-activities';
+        const stored = localStorage.getItem(STORAGE_KEY);
+        if (stored) {
+          const data = JSON.parse(stored);
+          const today = new Date().toISOString().slice(0, 10);
+          if (data.date === today) {
+            setGamesPlayedToday(data.activities.length);
+          } else {
+            setGamesPlayedToday(0);
+          }
+        }
+      } catch {
+        setIsUnlocked(false);
+        setGamesPlayedToday(0);
+      }
+    };
+
+    checkTaskCompletion();
+
+    // Listen for real-time updates from game completion
+    const handleStorageChange = () => {
+      checkTaskCompletion();
+    };
+
+    window.addEventListener('storage', handleStorageChange);
+    window.addEventListener('game-activity-updated', handleStorageChange);
+
+    return () => {
+      window.removeEventListener('storage', handleStorageChange);
+      window.removeEventListener('game-activity-updated', handleStorageChange);
+    };
   }, []);
 
   const handleOpen = () => {
@@ -78,6 +137,16 @@ export default function SurpriseBoxPage() {
     }, 1600);
   };
 
+  const handleOpenAnother = () => {
+    // Reset the surprise box so it needs another game to unlock
+    localStorage.setItem('eduverse_task_completed', 'false');
+    setIsOpened(false);
+    setReward(null);
+    setIsUnlocked(false);
+  };
+
+  const gamesUntilNextSurprise = Math.max(0, GAMES_NEEDED_FOR_SURPRISE - gamesPlayedToday);
+
   return (
     <div className="flex flex-col gap-8">
       <section className="space-y-2">
@@ -95,12 +164,17 @@ export default function SurpriseBoxPage() {
                 <Lock className="h-6 w-6" />
                 Surprise Box Locked
               </div>
-              <div className="rounded-3xl border-2 border-dashed border-pink-400 bg-gradient-to-br from-pink-100 to-yellow-100 p-8 space-y-3">
+              <div className="rounded-3xl border-2 border-dashed border-pink-400 bg-gradient-to-br from-pink-100 to-yellow-100 p-8 space-y-4">
                 <div className="text-5xl">🎁</div>
-                <h3 className="text-xl font-bold text-foreground">You're 1 step away from a surprise!</h3>
+                <h3 className="text-xl font-bold text-foreground">Play {gamesUntilNextSurprise} more game{gamesUntilNextSurprise !== 1 ? 's' : ''} for a surprise!</h3>
                 <p className="text-base text-foreground/70">
-                  Complete a Daily Quest or try a Mini-Game to unlock your reward.
+                  Complete any Mini-Game or Subject Game to unlock your reward.
                 </p>
+                <div className="mt-4 p-4 bg-white/50 rounded-2xl border-2 border-pink-300">
+                  <p className="text-sm text-foreground/70">
+                    Games played today: <span className="font-bold text-pink-600">{gamesPlayedToday}</span> / {GAMES_NEEDED_FOR_SURPRISE}
+                  </p>
+                </div>
               </div>
             </div>
           )}
@@ -145,14 +219,11 @@ export default function SurpriseBoxPage() {
               </div>
 
               <Button
-                onClick={() => {
-                  setIsOpened(false);
-                  setReward(null);
-                }}
+                onClick={handleOpenAnother}
                 variant="outline"
                 className="rounded-full border-2 border-pink-200 px-8 py-5 text-base font-bold"
               >
-                Open Another Surprise
+                Get Another Surprise
               </Button>
             </div>
           )}
@@ -182,9 +253,9 @@ export default function SurpriseBoxPage() {
           <div className="flex items-start gap-4">
             <div className="rounded-2xl bg-blue-100 p-3 text-3xl">✅</div>
             <div className="space-y-2">
-              <h3 className="text-xl font-black text-foreground">Complete a Task</h3>
+              <h3 className="text-xl font-black text-foreground">Complete a Game</h3>
               <p className="text-sm text-foreground/70">
-                Finish a Daily Quest, try a Mini-Game, or complete a quiz to unlock surprises.
+                Play any Mini-Game or Subject Game to unlock a new surprise box.
               </p>
             </div>
           </div>
@@ -194,9 +265,9 @@ export default function SurpriseBoxPage() {
           <div className="flex items-start gap-4">
             <div className="rounded-2xl bg-yellow-100 p-3 text-3xl">🌟</div>
             <div className="space-y-2">
-              <h3 className="text-xl font-black text-foreground">Celebrate Progress</h3>
+              <h3 className="text-xl font-black text-foreground">Daily Surprises</h3>
               <p className="text-sm text-foreground/70">
-                Rewards are fun, optional, and designed to encourage curiosity and effort.
+                Each day you can unlock a new surprise by playing games. Collect rewards!
               </p>
             </div>
           </div>

@@ -8,9 +8,9 @@ The Streak Feedback System provides immediate, positive reinforcement when a use
 
 ### 1. Motivational Toast Notification
 - **Trigger**: When streak increases by exactly 1 day
-- **Duration**: 3 seconds (auto-dismisses)
-- **Position**: Fixed at top center of screen
-- **Animation**: Spring entrance with scale and slide-in effect
+- **Duration**: ~2.5 seconds (auto-dismisses)
+- **Position**: Fixed near the right edge of the viewport, slightly below the top bar
+- **Animation**: Spring-based fade/scale to keep the toast visually stable
 
 ### 2. Soft Progress Chime
 - **Technology**: Web Audio API
@@ -102,13 +102,13 @@ useEffect(() => {
 
 ### Toast Animation
 ```tsx
-initial={{ opacity: 0, y: -50, scale: 0.8 }}
-animate={{ opacity: 1, y: 0, scale: 1 }}
-exit={{ opacity: 0, y: -30, scale: 0.9 }}
+initial={{ opacity: 0, scale: 0.9 }}
+animate={{ opacity: 1, scale: 1 }}
+exit={{ opacity: 0, scale: 0.9 }}
 transition={{
   type: "spring",
-  stiffness: 300,
-  damping: 25
+  stiffness: 280,
+  damping: 24
 }}
 ```
 

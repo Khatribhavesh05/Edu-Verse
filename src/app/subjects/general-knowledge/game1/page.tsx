@@ -10,6 +10,7 @@ import { generateHint } from '@/ai/flows/generate-hint';
 import { Dialog, DialogContent, DialogTrigger, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Info, Scale, Check, X } from 'lucide-react';
 import { shuffle } from 'lodash';
+import { endGameTracking } from '@/lib/game-activity-tracker';
 
 const STATEMENTS = [
   { text: "A shrimp's heart is in its head.", isFact: true },
@@ -33,6 +34,7 @@ const FactOrFictionFrenzy = () => {
   
   const [hint, setHint] = useState<{ title: string; description: string | null }>({ title: '', description: null });
   const [isHintLoading, setIsHintLoading] = useState(false);
+  const [startTime] = useState<number>(Date.now());
   
   const { toast } = useToast();
   const currentStatement = useMemo(() => shuffledStatements[level], [shuffledStatements, level]);
@@ -48,6 +50,7 @@ const FactOrFictionFrenzy = () => {
     if (level < shuffledStatements.length - 1) {
       setLevel(l => l + 1);
     } else {
+      endGameTracking('general-knowledge-fact-fiction', 'Fact or Fiction Frenzy', 'general-knowledge', startTime, score / 10, shuffledStatements.length);
       setWin(true);
     }
   };

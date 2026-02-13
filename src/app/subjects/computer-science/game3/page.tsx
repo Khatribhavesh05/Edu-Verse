@@ -10,6 +10,7 @@ import { generateHint } from '@/ai/flows/generate-hint';
 import { Dialog, DialogContent, DialogTrigger, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Info, ArrowRightLeft, Shuffle, BrainCircuit } from 'lucide-react';
 import { shuffle as lodashShuffle } from 'lodash';
+import { endGameTracking } from '@/lib/game-activity-tracker';
 
 const LEVELS = [
   { 
@@ -34,6 +35,7 @@ const SortingChallengeGame = () => {
 
   const [hint, setHint] = useState<{ title: string; description: string | null }>({ title: '', description: null });
   const [isHintLoading, setIsHintLoading] = useState(false);
+  const [startTime] = useState<number>(Date.now());
   const { toast } = useToast();
 
   const currentLevel = useMemo(() => LEVELS[levelIndex], [levelIndex]);
@@ -72,6 +74,7 @@ const SortingChallengeGame = () => {
             setLevelIndex(i => i + 1);
             setArray(lodashShuffle(LEVELS[levelIndex + 1].initialArray));
         } else {
+            endGameTracking('computer-science-sorting', 'Data Structure Drills', 'computer-science', startTime, LEVELS.length, LEVELS.length);
             setWin(true);
         }
     }

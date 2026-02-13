@@ -11,6 +11,7 @@ import { generateHint } from '@/ai/flows/generate-hint';
 import { Dialog, DialogContent, DialogTrigger, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Info, Landmark, Send, Globe2 } from 'lucide-react';
 import { shuffle } from 'lodash';
+import { endGameTracking } from '@/lib/game-activity-tracker';
 
 const LANDMARKS = [
   { name: "Eiffel Tower", country: "France" },
@@ -33,6 +34,7 @@ const LandmarkCountryGame = () => {
   const [shuffledLandmarks, setShuffledLandmarks] = useState(LANDMARKS);
   const [hint, setHint] = useState<{ title: string; description: string | null }>({ title: '', description: null });
   const [isHintLoading, setIsHintLoading] = useState(false);
+  const [startTime] = useState<number>(Date.now());
   
   const { toast } = useToast();
   const currentLandmark = useMemo(() => shuffledLandmarks[level], [shuffledLandmarks, level]);
@@ -45,6 +47,7 @@ const LandmarkCountryGame = () => {
       if (level < LANDMARKS.length - 1) {
         setLevel(l => l + 1);
       } else {
+        endGameTracking('social-studies-traveler', 'World Traveler', 'social-studies', startTime, score / 10 + 1, LANDMARKS.length);
         setWin(true);
       }
     } else {
@@ -52,6 +55,7 @@ const LandmarkCountryGame = () => {
         if (level < LANDMARKS.length - 1) {
             setLevel(l => l + 1);
         } else {
+            endGameTracking('social-studies-traveler', 'World Traveler', 'social-studies', startTime, score / 10, LANDMARKS.length);
             setWin(true);
         }
     }

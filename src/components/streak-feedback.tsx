@@ -49,7 +49,7 @@ export function StreakFeedback({ streakDays, show, onComplete }: StreakFeedbackP
       // Auto-dismiss after 3 seconds
       const timer = setTimeout(() => {
         onComplete?.();
-      }, 3000);
+      }, 2500);
 
       return () => clearTimeout(timer);
     }
@@ -59,15 +59,15 @@ export function StreakFeedback({ streakDays, show, onComplete }: StreakFeedbackP
     <AnimatePresence>
       {show && (
         <motion.div
-          initial={{ opacity: 0, y: -50, scale: 0.8 }}
-          animate={{ opacity: 1, y: 0, scale: 1 }}
-          exit={{ opacity: 0, y: -30, scale: 0.9 }}
+          initial={{ opacity: 0, scale: 0.9 }}
+          animate={{ opacity: 1, scale: 1 }}
+          exit={{ opacity: 0, scale: 0.9 }}
           transition={{
             type: "spring",
-            stiffness: 300,
-            damping: 25,
+            stiffness: 280,
+            damping: 24,
           }}
-          className="fixed top-20 left-1/2 -translate-x-1/2 z-50 pointer-events-none"
+          className="fixed top-24 right-6 z-50 pointer-events-none w-72"
         >
           <div className="bg-gradient-to-r from-orange-500 to-red-500 text-white px-6 py-4 rounded-2xl shadow-2xl border-2 border-white/30">
             <div className="flex items-center gap-3">

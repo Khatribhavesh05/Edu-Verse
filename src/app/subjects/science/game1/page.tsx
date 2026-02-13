@@ -9,6 +9,7 @@ import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { useToast } from '@/hooks/use-toast';
 import { generateHint } from '@/ai/flows/generate-hint';
+import { endGameTracking } from '@/lib/game-activity-tracker';
 
 type ItemType = 'recyclable' | 'non-recyclable';
 
@@ -39,6 +40,7 @@ const SaveThePlanetGame = () => {
   const [gameStarted, setGameStarted] = useState(false);
   const [hint, setHint] = useState<{ title: string; description: string | null }>({ title: '', description: null });
   const [isHintLoading, setIsHintLoading] = useState(false);
+  const [startTime] = useState<number>(Date.now());
 
   const { toast } = useToast();
   const gameIntervalRef = useRef<NodeJS.Timeout>();
@@ -107,6 +109,7 @@ const SaveThePlanetGame = () => {
 
   useEffect(() => {
     if (score >= WINNING_SCORE && !isGameOver) {
+        endGameTracking('science-save-planet', 'Save the Planet', 'science', startTime, score / 10, score / 10);
         setIsGameOver(true);
         if (gameIntervalRef.current) clearInterval(gameIntervalRef.current);
     }

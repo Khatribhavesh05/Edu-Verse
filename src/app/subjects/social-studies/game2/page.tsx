@@ -10,6 +10,7 @@ import { generateHint } from '@/ai/flows/generate-hint';
 import { Dialog, DialogContent, DialogTrigger, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Info, Building2 } from 'lucide-react';
 import { shuffle } from 'lodash';
+import { endGameTracking } from '@/lib/game-activity-tracker';
 
 const QUESTIONS = [
   { question: "What are the three branches of the U.S. government?", answer: "Legislative, Executive, Judicial", distractors: ["Federal, State, Local", "Monarchy, Oligarchy, Democracy"] },
@@ -30,6 +31,7 @@ const CivicsBuilderGame = () => {
   const [gameStarted, setGameStarted] = useState(false);
   const [hint, setHint] = useState<{ title: string; description: string | null }>({ title: '', description: null });
   const [isHintLoading, setIsHintLoading] = useState(false);
+  const [startTime] = useState<number>(Date.now());
   
   const { toast } = useToast();
   const currentQuestion = useMemo(() => QUESTIONS[level], [level]);
@@ -48,6 +50,7 @@ const CivicsBuilderGame = () => {
       if (level < QUESTIONS.length - 1) {
         setLevel(l => l + 1);
       } else {
+        endGameTracking('social-studies-civics', 'Civics Builder', 'social-studies', startTime, score / 10 + 1, QUESTIONS.length);
         setWin(true);
       }
     } else {

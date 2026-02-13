@@ -10,6 +10,7 @@ import { generateHint } from '@/ai/flows/generate-hint';
 import { Dialog, DialogContent, DialogTrigger, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Info, CircuitBoard, Check, X } from 'lucide-react';
 import { shuffle } from 'lodash';
+import { endGameTracking } from '@/lib/game-activity-tracker';
 
 const LEVELS = [
     { name: "AND Gate", inputs: [true, true], output: true, gates: ['AND', 'OR', 'NOT'] },
@@ -28,6 +29,7 @@ const LogicGateLabyrinthGame = () => {
 
     const [hint, setHint] = useState<{ title: string; description: string | null }>({ title: '', description: null });
     const [isHintLoading, setIsHintLoading] = useState(false);
+    const [startTime] = useState<number>(Date.now());
     const { toast } = useToast();
 
     const currentLevel = useMemo(() => LEVELS[levelIndex], [levelIndex]);
@@ -75,6 +77,7 @@ const LogicGateLabyrinthGame = () => {
             if (levelIndex < LEVELS.length - 1) {
                 setLevelIndex(i => i + 1);
             } else {
+                endGameTracking('computer-science-logic-gate', 'Logic Gate Labyrinth', 'computer-science', startTime, score / 10 + 1, LEVELS.length);
                 setWin(true);
             }
             setSelectedGate(null);

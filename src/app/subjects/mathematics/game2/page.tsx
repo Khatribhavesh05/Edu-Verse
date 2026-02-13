@@ -9,6 +9,7 @@ import { useToast } from '@/hooks/use-toast';
 import { generateHint } from '@/ai/flows/generate-hint';
 import { Dialog, DialogContent, DialogTrigger, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Info, Plus, Minus, MoveHorizontal } from 'lucide-react';
+import { endGameTracking } from '@/lib/game-activity-tracker';
 
 const NumberLineGame = () => {
     const [level, setLevel] = useState(0);
@@ -20,6 +21,7 @@ const NumberLineGame = () => {
     const [gameStarted, setGameStarted] = useState(false);
     const [hint, setHint] = useState<{ title: string; description: string | null }>({ title: '', description: null });
     const [isHintLoading, setIsHintLoading] = useState(false);
+    const [startTime] = useState<number>(Date.now());
     
     const { toast } = useToast();
 
@@ -53,6 +55,7 @@ const NumberLineGame = () => {
             if (level < 10) {
                 setLevel(l => l + 1);
             } else {
+                endGameTracking('math-number-line', 'Number Line Navigation', 'math', startTime, score / 10 + 1, 11);
                 setWin(true);
             }
         } else {
@@ -61,6 +64,7 @@ const NumberLineGame = () => {
             if (level < 10) {
                 setLevel(l => l + 1);
             } else {
+                endGameTracking('math-number-line', 'Number Line Navigation', 'math', startTime, Math.max(0, score - 5) / 10, 11);
                 setWin(true);
             }
         }

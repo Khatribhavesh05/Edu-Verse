@@ -9,6 +9,7 @@ import { useToast } from '@/hooks/use-toast';
 import { generateHint } from '@/ai/flows/generate-hint';
 import { Dialog, DialogContent, DialogTrigger, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Info, Pen, Zap } from 'lucide-react';
+import { endGameTracking } from '@/lib/game-activity-tracker';
 
 const POLYGONS = [
     { name: 'Triangle', sides: 3 },
@@ -27,6 +28,7 @@ const PolygonPlayground = () => {
     const [gameStarted, setGameStarted] = useState(false);
     const [hint, setHint] = useState<{ title: string; description: string | null }>({ title: '', description: null });
     const [isHintLoading, setIsHintLoading] = useState(false);
+    const [startTime] = useState<number>(Date.now());
 
     const { toast } = useToast();
     const currentPolygon = useMemo(() => POLYGONS[level], [level]);
@@ -51,6 +53,7 @@ const PolygonPlayground = () => {
                  setVertices([]);
                  setIsDrawing(true);
             } else {
+                endGameTracking('math-polygon-playground', 'Polygon Playground', 'math', startTime, score / 10 + 1, POLYGONS.length);
                 setWin(true);
             }
         } else {

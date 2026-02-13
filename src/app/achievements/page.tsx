@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { AchievementBadge } from '@/components/achievement-badge';
 import { playPageTransitionSound } from '@/lib/sound-effects';
 import { useUserAchievements } from '@/hooks/use-achievements';
@@ -51,8 +51,11 @@ const achievementMetadata = [
 ];
 
 export default function AchievementsPage() {
+  const [isClient, setIsClient] = useState(false);
+
   useEffect(() => {
     playPageTransitionSound();
+    setIsClient(true);
   }, []);
 
   const { achievements: earnedAchievements, loading } = useUserAchievements();
@@ -61,7 +64,7 @@ export default function AchievementsPage() {
     return {
       ...achievement,
       earned: Boolean(earnedRecord),
-      earnedDate: earnedRecord?.unlockedAt
+      earnedDate: isClient && earnedRecord?.unlockedAt
         ? new Date(earnedRecord.unlockedAt).toLocaleDateString('en-US', {
             month: 'short',
             day: 'numeric',

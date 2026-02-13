@@ -1,7 +1,7 @@
 
 'use client';
 
-import { useEffect, useMemo } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Card, CardHeader, CardTitle, CardContent, CardDescription } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
 import { Badge } from '@/components/ui/badge';
@@ -13,8 +13,11 @@ import { useGameStats } from '@/hooks/use-game-stats';
 import { useUserAchievements } from '@/hooks/use-achievements';
 
 export default function DashboardPage() {
+  const [isClient, setIsClient] = useState(false);
+
   useEffect(() => {
     playPageTransitionSound();
+    setIsClient(true);
   }, []);
 
   const { activities } = useGameStats();
@@ -23,7 +26,7 @@ export default function DashboardPage() {
   const progressEntries = useMemo(() => {
     const map = new Map<
       string,
-      { label: string; gameType: 'math' | 'science' | 'language'; correct: number; total: number }
+      { label: string; gameType: string; correct: number; total: number }
     >();
 
     activities.forEach((activity) => {
@@ -58,6 +61,18 @@ export default function DashboardPage() {
 
   const unlockedBadgeNames = earnedAchievements.map((achievement) => achievement.name);
   const displayedBadges = allBadges.filter((badge) => unlockedBadgeNames.includes(badge.name));
+
+  if (!isClient) {
+    return (
+      <div className="flex flex-col gap-8">
+        <section>
+          <h1 className="text-5xl font-black tracking-tight">Welcome, Super Learner!</h1>
+          <p className="text-xl text-brand-text-light mt-1">Here's your awesome progress. Keep it up! 🚀</p>
+        </section>
+        <div className="text-center text-foreground/50">Loading your dashboard...</div>
+      </div>
+    );
+  }
 
   return (
     <motion.div 
@@ -103,7 +118,7 @@ export default function DashboardPage() {
               </div>
             ) : (
               <div className="p-6 rounded-2xl border-2 border-dashed border-blue-200 bg-blue-50 text-center text-foreground/70">
-                Play a mini-game to see your progress cards here!
+                Play any game to see your progress cards here!
               </div>
             )}
           </CardContent>

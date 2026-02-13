@@ -10,6 +10,7 @@ import { generateHint } from '@/ai/flows/generate-hint';
 import { Dialog, DialogContent, DialogTrigger, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Info, MessageCircle } from 'lucide-react';
 import { shuffle } from 'lodash';
+import { endGameTracking } from '@/lib/game-activity-tracker';
 
 const WORD_PAIRS = [
     { word: "Happy", synonym: "Joyful", distractors: ["Sad", "Angry", "Tired"] },
@@ -34,6 +35,7 @@ const SynonymSprintGame = () => {
     
     const [hint, setHint] = useState<{ title: string; description: string | null }>({ title: '', description: null });
     const [isHintLoading, setIsHintLoading] = useState(false);
+    const [startTime] = useState<number>(Date.now());
 
     const timerRef = React.useRef<NodeJS.Timeout>();
     const { toast } = useToast();
@@ -77,6 +79,7 @@ const SynonymSprintGame = () => {
         if (level < WORD_PAIRS.length - 1) {
             setLevel(l => l + 1);
         } else {
+            endGameTracking('language-synonym-sprint', 'Synonym Sprint', 'language', startTime, score / 10, WORD_PAIRS.length);
             setGameOver(true);
         }
     };

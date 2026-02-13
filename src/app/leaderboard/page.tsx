@@ -1,16 +1,12 @@
 'use client';
 
-import { useMemo, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { RecognitionCard } from '@/components/recognition-card';
 import { playPageTransitionSound } from '@/lib/sound-effects';
 import { Card, CardContent } from '@/components/ui/card';
 import { useLeaderboardEntries } from '@/hooks/use-leaderboard';
 
 export default function LeaderboardPage() {
-  useEffect(() => {
-    playPageTransitionSound();
-  }, []);
-  const { entries, loading } = useLeaderboardEntries('friendly', 5);
   // Demo explorer names
   const demoNames = [
     'Explorer Alex',
@@ -25,15 +21,25 @@ export default function LeaderboardPage() {
     'Wise Rory',
   ];
 
-  // Memoized random names for each category
-  const randomNames = useMemo(() => {
+  // State for random names - initialize with first names to avoid hydration mismatch
+  const [randomNames, setRandomNames] = useState({
+    mostImproved: demoNames[0],
+    mostCurious: demoNames[1],
+    dailyStar: demoNames[2],
+  });
+
+  useEffect(() => {
+    playPageTransitionSound();
+    // Set random names only on client side
     const getRandomName = () => demoNames[Math.floor(Math.random() * demoNames.length)];
-    return {
+    setRandomNames({
       mostImproved: getRandomName(),
       mostCurious: getRandomName(),
       dailyStar: getRandomName(),
-    };
+    });
   }, []);
+
+  const { entries, loading } = useLeaderboardEntries('friendly', 5);
 
   const categories = [
     {

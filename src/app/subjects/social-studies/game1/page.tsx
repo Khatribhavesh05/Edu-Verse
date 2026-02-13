@@ -12,6 +12,7 @@ import { generateHint } from '@/ai/flows/generate-hint';
 import { Dialog, DialogContent, DialogTrigger, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Info, Landmark, GanttChartSquare } from 'lucide-react';
 import { shuffle } from 'lodash';
+import { endGameTracking } from '@/lib/game-activity-tracker';
 
 const ItemTypes = {
   EVENT: 'event',
@@ -74,6 +75,7 @@ const HistoricalTimelineGame = () => {
   const [hint, setHint] = useState<{ title: string; description: string | null }>({ title: '', description: null });
   const [isHintLoading, setIsHintLoading] = useState(false);
   const [timelinesCompleted, setTimelinesCompleted] = useState(0);
+  const [startTime] = useState<number>(Date.now());
   
   const { toast } = useToast();
   const currentTimeline = useMemo(() => TIMELINES[level], [level]);
@@ -102,6 +104,7 @@ const HistoricalTimelineGame = () => {
       if (level < TIMELINES.length - 1) {
         setLevel(l => l + 1);
       } else {
+        endGameTracking('social-studies-timeline', 'Historical Timeline', 'social-studies', startTime, timelinesCompleted + 1, TIMELINES.length);
         setWin(true);
       }
     } else {

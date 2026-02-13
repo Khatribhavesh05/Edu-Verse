@@ -11,6 +11,7 @@ import { Dialog, DialogContent, DialogTrigger, DialogHeader, DialogTitle } from 
 import { Info, Binary, Brain } from 'lucide-react';
 import { shuffle } from 'lodash';
 import { playActionStartSound } from '@/lib/sound-effects';
+import { endGameTracking } from '@/lib/game-activity-tracker';
 
 const LEVELS = 10;
 const TIME_LIMIT = 15; // seconds per question
@@ -26,6 +27,7 @@ const BinaryBlitzGame = () => {
     
     const [hint, setHint] = useState<{ title: string; description: string | null }>({ title: '', description: null });
     const [isHintLoading, setIsHintLoading] = useState(false);
+    const [startTime] = useState<number>(Date.now());
 
     const timerRef = React.useRef<NodeJS.Timeout>();
     const { toast } = useToast();
@@ -65,6 +67,7 @@ const BinaryBlitzGame = () => {
          if (level < LEVELS - 1) {
             setLevel(l => l + 1);
         } else {
+            endGameTracking('computer-science-binary-blitz', 'Binary Blitz', 'computer-science', startTime, score / 10, LEVELS);
             setGameOver(true);
         }
     }, [level]);
