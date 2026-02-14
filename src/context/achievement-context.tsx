@@ -34,9 +34,9 @@ export function AchievementProvider({ children }: { children: React.ReactNode })
 
     // Load from localStorage on mount
     useEffect(() => {
+        if (typeof window === 'undefined') return;
         const saved = localStorage.getItem('eduverse_achievements');
         if (saved) {
-        const [pendingBadge, setPendingBadge] = useState<Badge | null>(null);
             try {
                 setStats(JSON.parse(saved));
             } catch (e) {
@@ -47,6 +47,7 @@ export function AchievementProvider({ children }: { children: React.ReactNode })
 
     // Save to localStorage whenever stats change
     useEffect(() => {
+        if (typeof window === 'undefined') return;
         localStorage.setItem('eduverse_achievements', JSON.stringify(stats));
     }, [stats]);
 

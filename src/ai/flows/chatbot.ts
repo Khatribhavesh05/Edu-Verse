@@ -26,6 +26,10 @@ const SYSTEM_PROMPT = `You are Orbi 🪐, the official AI assistant of Eduverse.
 
 export async function chat(input: ChatInput): Promise<ChatOutput> {
   try {
+    if (!input?.message) {
+      return { response: '🪐 Please send a message!' };
+    }
+    
     const completion = await openai.chat.completions.create({
       model: 'gpt-3.5-turbo',
       messages: [
@@ -35,8 +39,15 @@ export async function chat(input: ChatInput): Promise<ChatOutput> {
       temperature: 0.7,
       max_tokens: 128,
     });
-    return { response: completion.choices[0]?.message?.content || '' };
-  } catch {
+    
+    const response = completion.choices?.[0]?.message?.content || '';
+    if (!response) {
+      return { response: "🪐 I'm thinking but couldn't form a response. Try again!" };
+    }
+    
+    return { response };
+  } catch (error) {
+    console.error('Chat flow error:', error);
     return { response: "🪐 I'm running in demo mode right now, so I can't chat for real. But I'm Orbi, your Eduverse AI assistant! Connect an OpenAI API key to unlock the full experience." };
   }
 }

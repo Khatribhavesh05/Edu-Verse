@@ -1,6 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { OpenAI } from 'openai';
 
+if (!process.env.OPENAI_API_KEY) {
+  console.warn('⚠️ OPENAI_API_KEY not set - running in demo mode');
+}
+
 const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY || 'dummy-key' });
 
 function parseQuestions(text: string) {
@@ -25,7 +29,11 @@ const DEMO_QUESTIONS = [
 
 export async function POST(req: NextRequest) {
   try {
-    const { count } = await req.json();
+    if (!process.env.OPENAI_API_KEY) {
+      return NextResponse.json({ questions: DEMO_QUESTIONS });
+    }
+    const body = await req.json();
+    const count = body?.count || 5;
     const prompt = `Generate ${count} simple math questions for kids. Only generate questions that are logical, answerable, and make sense in context. Do NOT generate questions that are ambiguous, nonsensical, or have multiple possible answers. Each question must have only one clear, logical answer and should be suitable for children. Do NOT generate questions based on facts or guesses (e.g., 'How many apples do I have?'). Only generate questions where the correct answer is clear from the math, not from guessing facts. Format each as: <question> | Answer: <answer> | Options: <comma separated options including answer>.`;
     const completion = await openai.chat.completions.create({
       model: 'gpt-3.5-turbo',

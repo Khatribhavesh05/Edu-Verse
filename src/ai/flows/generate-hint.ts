@@ -29,6 +29,10 @@ Your hint should guide the student to think about the process of solving the pro
 
 export async function generateHint(input: GenerateHintInput): Promise<GenerateHintOutput> {
   try {
+    if (!input?.question) {
+      return { hint: '🪐 No question provided. Please try again!' };
+    }
+    
     const completion = await openai.chat.completions.create({
       model: 'gpt-3.5-turbo',
       messages: [
@@ -38,8 +42,15 @@ export async function generateHint(input: GenerateHintInput): Promise<GenerateHi
       temperature: 0.7,
       max_tokens: 256,
     });
-    return { hint: completion.choices[0]?.message?.content || '' };
-  } catch {
+    
+    const hint = completion.choices?.[0]?.message?.content || '';
+    if (!hint) {
+      return { hint: '🪐 Try breaking the problem into smaller steps! Read it again carefully.' };
+    }
+    
+    return { hint };
+  } catch (error) {
+    console.error('Generate hint flow error:', error);
     return { hint: "🪐 Demo mode: Try breaking the problem into smaller steps! Read it again carefully and look for clues in the numbers." };
   }
 }

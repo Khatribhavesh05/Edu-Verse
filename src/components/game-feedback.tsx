@@ -1,7 +1,7 @@
 
 'use client';
 
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import Confetti from 'react-confetti';
 import { Button } from './ui/button';
@@ -19,6 +19,14 @@ interface GameFeedbackProps {
 export function GameFeedback({ status, onNext, correctAnswer, score, winMessage }: GameFeedbackProps) {
   const isCorrect = status === 'correct';
   const isWin = status === 'win';
+  const [windowSize, setWindowSize] = useState({ width: 0, height: 0 });
+
+  // Set window size on client side only
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      setWindowSize({ width: window.innerWidth, height: window.innerHeight });
+    }
+  }, []);
 
   // Play success sound on correct answer or win
   useEffect(() => {
@@ -61,7 +69,7 @@ export function GameFeedback({ status, onNext, correctAnswer, score, winMessage 
       transition={{ type: 'spring', stiffness: 300, damping: 30 }}
       className={`fixed bottom-0 left-0 right-0 p-6 z-50 text-white rounded-t-3xl shadow-[0_-10px_30px_rgba(0,0,0,0.1)] ${isCorrect ? 'bg-gradient-to-t from-green-500 to-green-400' : 'bg-gradient-to-t from-orange-500 to-orange-400'}`}
     >
-        {isCorrect && <Confetti width={window.innerWidth} height={window.innerHeight} numberOfPieces={100} recycle={false} gravity={0.3} />}
+        {isCorrect && windowSize.width > 0 && <Confetti width={windowSize.width} height={windowSize.height} numberOfPieces={100} recycle={false} gravity={0.3} />}
       <div className="max-w-3xl mx-auto flex items-center justify-between">
         <div className="flex items-center gap-4">
           <div className="text-5xl">{isCorrect ? '🥳' : '🤔'}</div>

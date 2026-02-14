@@ -14,6 +14,7 @@ export default function MiniGamesPage() {
 
   useEffect(() => {
     playPageTransitionSound();
+    if (typeof window === 'undefined') return;
     try {
       const today = new Date().toISOString().slice(0, 10);
       const storedDate = localStorage.getItem('eduverse-mini-game-played-date');

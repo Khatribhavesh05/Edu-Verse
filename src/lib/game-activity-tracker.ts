@@ -15,6 +15,7 @@ function getTodayDate(): string {
 
 // Get all activities for today
 export function getTodayActivities(): GameActivity[] {
+  if (typeof window === 'undefined') return [];
   try {
     const stored = localStorage.getItem(STORAGE_KEY);
     if (!stored) return [];
@@ -31,6 +32,7 @@ export function getTodayActivities(): GameActivity[] {
 
 // Log a game activity
 export function logGameActivity(activity: GameActivity): void {
+  if (typeof window === 'undefined') return;
   try {
     const today = getTodayDate();
     let stats: DailyGameStats = { date: today, activities: [] };
@@ -72,28 +74,28 @@ export function logGameActivity(activity: GameActivity): void {
         console.log('⚠️ Demo mode: Activity saved to local storage only (skipping Firestore).');
         return;
       }
+      console.warn('No authenticated user - skipping Firestore logging');
+      return;
     }
 
-    if (userId) {
-      console.log('✅ User authenticated, logging activity for user:', userId);
-      logGameActivityFirestore(userId, completeActivity)
-        .then(() => {
-          console.log('✅ Game activity logged to Firestore');
-        })
-        .catch((error) => {
-          console.error('❌ Failed to sync game activity to Firestore:', error);
-        });
-      recordDailyStreak(userId, 'learning')
-        .then(() => {
-          console.log('✅ Streak updated successfully!');
-        })
-        .catch((error) => {
-          console.error('❌ Failed to update streak after activity:', error);
-        });
-    } else {
-      console.error('❌ No user authenticated. Cannot log activity or update streak.');
-      console.log('Auth state:', auth.currentUser);
-    }
+    console.log('✅ User authenticated, logging activity for user:', userId);
+    
+    // Fire-and-forget async operations
+    logGameActivityFirestore(userId, completeActivity)
+      .then(() => {
+        console.log('✅ Game activity logged to Firestore');
+      })
+      .catch((error) => {
+        console.error('❌ Failed to sync game activity to Firestore:', error);
+      });
+
+    recordDailyStreak(userId, 'learning')
+      .then(() => {
+        console.log('✅ Streak updated successfully!');
+      })
+      .catch((error) => {
+        console.error('❌ Failed to update streak after activity:', error);
+      });
   } catch (error) {
     console.error('Failed to log game activity:', error);
   }

@@ -34,7 +34,7 @@ export default function DailyQuestCard() {
   const isQuestComplete = completedTasks.length === quest.tasks.length;
 
   useEffect(() => {
-    if (!isQuestComplete) {
+    if (!isQuestComplete || typeof window === 'undefined') {
       return;
     }
 

@@ -42,8 +42,10 @@ export function LoginForm() {
         });
       }
       const user = userCredential.user;
-      localStorage.setItem('eduverse_user', JSON.stringify({ email: user.email, uid: user.uid, provider: 'email' }));
-      router.push('/dashboard');
+      if (typeof window !== 'undefined') {
+        localStorage.setItem('eduverse_user', JSON.stringify({ email: user.email, uid: user.uid, provider: 'email' }));
+      }
+      router.push('/');
     } catch (err: any) {
       console.error("Login failed:", err);
       // Auto-fallback to demo login on ANY error
@@ -66,12 +68,14 @@ export function LoginForm() {
     try {
       const result = await signInWithPopup(auth, googleProvider);
       const user = result.user;
-      localStorage.setItem('eduverse_user', JSON.stringify({ email: user.email, uid: user.uid, provider: 'google' }));
+      if (typeof window !== 'undefined') {
+        localStorage.setItem('eduverse_user', JSON.stringify({ email: user.email, uid: user.uid, provider: 'google' }));
+      }
       toast({
         title: 'Welcome!',
         description: `Login successful! Welcome ${user.displayName || user.email}.`,
       });
-      router.push('/dashboard');
+      router.push('/');
     } catch (err: any) {
       // Enable demo login for Google attempt failure too
       toast({

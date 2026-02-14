@@ -18,7 +18,11 @@ export function useStreak(streakType = 'learning') {
       }
 
       try {
-        const data = await getStreak(user.uid, streakType);
+      if (!user?.uid) {
+        setStreak(null);
+        return;
+      }
+      const data = await getStreak(user?.uid ?? 'guest', streakType);
         if (isMounted) {
           setStreak(data);
         }

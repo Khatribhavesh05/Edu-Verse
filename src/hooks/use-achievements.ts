@@ -21,7 +21,11 @@ export function useUserAchievements() {
 
       setLoading(true);
       try {
-        const data = await getAchievements(user.uid);
+      if (!user?.uid) {
+        setAchievements([]);
+        return;
+      }
+      const data = await getAchievements(user?.uid ?? 'guest');
         if (isMounted) {
           setAchievements(data);
         }

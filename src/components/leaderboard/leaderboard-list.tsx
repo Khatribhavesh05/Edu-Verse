@@ -6,7 +6,6 @@ import { LeaderboardCard } from './leaderboard-card';
 import { useAchievements } from '@/context/achievement-context';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAuth } from '@/components/auth-provider';
-import confetti from 'canvas-confetti';
 
 export function LeaderboardList() {
     const { user } = useAuth();
@@ -22,12 +21,12 @@ export function LeaderboardList() {
         // Create current user object
         const currentUser: LeaderboardUser = {
             id: user?.uid || 'guest',
-            name: user?.displayName || (user?.email?.split('@')[0] || 'Explorer'),
+            name: user?.displayName || (user?.email?.split('@')?.[0] ?? 'Explorer'),
             avatar: '🧑‍🚀', // Custom avatar for user
-            totalPoints: stats.totalScore,
-            gamesPlayed: stats.gamesPlayed,
-            streakDays: stats.streakCount,
-            badgesUnlocked: stats.unlockedBadges.length,
+            totalPoints: stats?.totalScore ?? 0,
+            gamesPlayed: stats?.gamesPlayed ?? 0,
+            streakDays: stats?.streakCount ?? 0,
+            badgesUnlocked: stats?.unlockedBadges?.length ?? 0,
             isCurrentUser: true,
         };
 
@@ -51,10 +50,10 @@ export function LeaderboardList() {
                     if (u.isCurrentUser) {
                         return {
                             ...u,
-                            totalPoints: stats.totalScore,
-                            gamesPlayed: stats.gamesPlayed,
-                            streakDays: stats.streakCount,
-                            badgesUnlocked: stats.unlockedBadges.length,
+                            totalPoints: stats?.totalScore ?? 0,
+                            gamesPlayed: stats?.gamesPlayed ?? 0,
+                            streakDays: stats?.streakCount ?? 0,
+                            badgesUnlocked: stats?.unlockedBadges?.length ?? 0,
                         }
                     }
                     return u;

@@ -96,6 +96,7 @@ export function useGameStats(): GameStats {
 
     const handleStorageUpdate = () => {
       const userId = auth.currentUser?.uid;
+      if (!userId) return;
       if (userId) {
         updateWithFirestore(userId);
       } else {

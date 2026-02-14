@@ -32,7 +32,7 @@ export function VoiceLearning() {
   const persistVoiceMessage = async (role: 'user' | 'assistant', content: string) => {
     if (!content) return;
     const user = auth.currentUser;
-    if (!user) return;
+    if (!user?.uid) return;
     try {
       await saveAIChatMessage(user.uid, VOICE_CHAT_ID, {
         role,
@@ -68,10 +68,12 @@ export function VoiceLearning() {
     recognition.interimResults = false;
     recognition.maxAlternatives = 1;
     recognition.onresult = async (event: any) => {
-      const transcript = event.results[0][0].transcript;
+      const transcript = event?.results?.[0]?.[0]?.transcript;
+      if (!transcript) return;
+      
       setPhase('heard');
       setMessage(`You said: "${transcript}"`);
-      persistVoiceMessage('user', transcript);
+      await persistVoiceMessage('user', transcript);
       setPhase('response');
       setMessage('Thinking…');
       try {
@@ -80,13 +82,21 @@ export function VoiceLearning() {
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ transcript }),
         });
+        if (!res.ok) throw new Error('Voice API failed');
+        
         const data = await res.json();
+        if (!data?.reply) throw new Error('No reply from API');
+        
         setMessage('Orbi says:');
         setResponse(data.reply);
-        const audio = new Audio(data.audio);
-        audio.play();
-        persistVoiceMessage('assistant', data.reply);
+        
+        if (data.audio) {
+          const audio = new Audio(data.audio);
+          audio.play().catch(err => console.warn('Audio playback failed:', err));
+        }
+        await persistVoiceMessage('assistant', data.reply);
       } catch (err) {
+        console.error('Voice response error:', err);
         setMessage('Sorry, Orbi could not reply.');
         setResponse('');
       }

@@ -61,7 +61,7 @@ export function ChatbotForm() {
   const persistMessage = async (role: 'user' | 'assistant', content: string) => {
     if (!content) return;
     const user = auth.currentUser;
-    if (!user) return;
+    if (!user?.uid) return;
     try {
       await saveAIChatMessage(user.uid, CHAT_ID, {
         role,

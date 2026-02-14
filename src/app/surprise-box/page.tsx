@@ -82,6 +82,7 @@ export default function SurpriseBoxPage() {
     
     // Check if task is already completed and count games played today
     const checkTaskCompletion = () => {
+      if (typeof window === 'undefined') return;
       try {
         const completed = localStorage.getItem('eduverse_task_completed') === 'true';
         setIsUnlocked(completed);

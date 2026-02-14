@@ -32,6 +32,7 @@ export function DailyMissions() {
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
+        if (typeof window === 'undefined') return;
         const today = new Date().toDateString();
         const savedDate = localStorage.getItem('daily_mission_date');
         const savedMissions = localStorage.getItem('daily_missions_data');

@@ -11,7 +11,7 @@ export function FloatingEmojis() {
     useEffect(() => {
         const interval = setInterval(() => {
             // Add a new random emoji
-            if (document.hidden) return; // Pause if tab hidden
+            if (typeof document !== 'undefined' && document.hidden) return; // Pause if tab hidden
 
             const newItem = {
                 id: Date.now(),

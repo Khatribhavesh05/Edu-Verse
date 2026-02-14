@@ -56,15 +56,20 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
 
   useEffect(() => {
+    if (typeof window === 'undefined') return;
     // If user explicitly navigates to /login, clear demo session
     if (pathname === '/login') {
       localStorage.removeItem('eduverse_demo_user');
       setDemoUser(null);
     } else {
       // Check for existing demo session
-      const storedDemoUser = localStorage.getItem('eduverse_demo_user');
-      if (storedDemoUser) {
-        setDemoUser(JSON.parse(storedDemoUser));
+      try {
+        const storedDemoUser = localStorage.getItem('eduverse_demo_user');
+        if (storedDemoUser) {
+          setDemoUser(JSON.parse(storedDemoUser));
+        }
+      } catch (error) {
+        console.error('Failed to parse demo user:', error);
       }
     }
 
@@ -89,16 +94,18 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
     // Redirect to dashboard if authenticated and on login page
     else if (currentUser && pathname === '/login') {
-      console.log('✅ User authenticated, redirecting to dashboard');
-      router.push('/dashboard');
+      console.log('✅ User authenticated, redirecting to home');
+      router.push('/');
     }
   }, [user, demoUser, loading, pathname, router]);
 
   const loginDemo = (email: string) => {
     const newUser = createDemoUser(email);
     setDemoUser(newUser);
-    localStorage.setItem('eduverse_demo_user', JSON.stringify(newUser));
-    router.push('/dashboard');
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('eduverse_demo_user', JSON.stringify(newUser));
+    }
+    router.push('/');
   };
 
   return (

@@ -16,7 +16,9 @@ export function LogoutButton() {
     // Sign out from Firebase
     await signOut(auth);
     // Clear user session from localStorage
-    localStorage.removeItem('eduverse_user');
+    if (typeof window !== 'undefined') {
+      localStorage.removeItem('eduverse_user');
+    }
     // Show logout toast
     toast({
       title: 'Logged out',

@@ -27,6 +27,10 @@ Generate a concise and informative topic description for the subject provided. A
 
 export async function generateTopicDescription(input: GenerateTopicDescriptionInput): Promise<GenerateTopicDescriptionOutput> {
   try {
+    if (!input?.subject) {
+      return { description: '🪐 Please provide a subject!' };
+    }
+    
     const completion = await openai.chat.completions.create({
       model: 'gpt-3.5-turbo',
       messages: [
@@ -36,8 +40,15 @@ export async function generateTopicDescription(input: GenerateTopicDescriptionIn
       temperature: 0.7,
       max_tokens: 256,
     });
-    return { description: completion.choices[0]?.message?.content || '' };
-  } catch {
+    
+    const description = completion.choices?.[0]?.message?.content || '';
+    if (!description) {
+      return { description: `🪐 "${input.subject}" is a fascinating topic! Try refreshing to get a description.` };
+    }
+    
+    return { description };
+  } catch (error) {
+    console.error('Generate topic description flow error:', error);
     return { description: `🪐 Demo mode: "${input.subject}" is a fascinating topic! In the full version, Orbi will generate a detailed, kid-friendly description for you. Connect an OpenAI API key to unlock this feature.` };
   }
 }
