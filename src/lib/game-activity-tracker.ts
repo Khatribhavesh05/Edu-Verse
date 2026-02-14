@@ -59,7 +59,21 @@ export function logGameActivity(activity: GameActivity): void {
     // Trigger a storage event for real-time updates
     window.dispatchEvent(new Event('game-activity-updated'));
 
-    const userId = auth.currentUser?.uid;
+    // Dispatch custom event for achievement system
+    const event = new CustomEvent('eduverse:game-completed', { detail: completeActivity });
+    window.dispatchEvent(event);
+
+    let userId = auth.currentUser?.uid;
+
+    if (!userId) {
+      // Check for demo user
+      const demoUserJson = localStorage.getItem('eduverse_demo_user');
+      if (demoUserJson) {
+        console.log('⚠️ Demo mode: Activity saved to local storage only (skipping Firestore).');
+        return;
+      }
+    }
+
     if (userId) {
       console.log('✅ User authenticated, logging activity for user:', userId);
       logGameActivityFirestore(userId, completeActivity)

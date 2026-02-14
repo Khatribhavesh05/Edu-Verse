@@ -22,19 +22,21 @@ const TextToSpeechOutputSchema = z.object({
 });
 export type TextToSpeechOutput = z.infer<typeof TextToSpeechOutputSchema>;
 
-  // OpenAI TTS API call
-  const response = await openai.audio.speech.create({
-    model: 'tts-1',
-    input: input.text,
-    voice: 'alloy', // You can choose from 'alloy', 'echo', 'fable', 'onyx', 'nova', 'shimmer'
-    response_format: 'mp3',
-  });
-  // response is a ReadableStream, convert to base64
-  const buffer = Buffer.from(await response.arrayBuffer());
-  return {
-    audio: 'data:audio/mp3;base64,' + buffer.toString('base64'),
-  };
+export async function textToSpeech(input: TextToSpeechInput): Promise<TextToSpeechOutput> {
+  try {
+    // OpenAI TTS API call
+    const response = await openai.audio.speech.create({
+      model: 'tts-1',
+      input: input.text,
+      voice: 'alloy',
+      response_format: 'mp3',
+    });
+    // response is a ReadableStream, convert to base64
+    const buffer = Buffer.from(await response.arrayBuffer());
+    return {
+      audio: 'data:audio/mp3;base64,' + buffer.toString('base64'),
+    };
+  } catch {
+    return { audio: '' };
+  }
 }
-}
-
-

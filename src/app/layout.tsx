@@ -6,6 +6,8 @@ import { Toaster } from '@/components/ui/toaster';
 import { cn } from '@/lib/utils';
 import { ConditionalLayout } from '@/components/layout/conditional-layout';
 import { AuthProvider } from '@/components/auth-provider';
+import { AchievementProvider } from '@/context/achievement-context';
+import { BadgePopup } from '@/components/achievements/badge-popup';
 
 export const metadata: Metadata = {
   title: 'EduVerse',
@@ -25,10 +27,13 @@ export default function RootLayout({
         <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;800;900&display=swap" rel="stylesheet" />
       </head>
       <body className={cn('font-body antialiased min-h-screen bg-gradient-to-br from-blue-50 via-purple-50 to-yellow-50')}>
-          <AuthProvider>
+        <AuthProvider>
+          <AchievementProvider>
             <ConditionalLayout>{children}</ConditionalLayout>
+            <BadgePopup />
             <Toaster />
-          </AuthProvider>
+          </AchievementProvider>
+        </AuthProvider>
       </body>
     </html>
   );
